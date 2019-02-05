@@ -1,0 +1,19 @@
+
+public class clase {
+	public static void main(String[] args) {
+		boolean flag= false;
+		int cont = 0;
+		do { 
+			cont++;
+			if(cont==10) {
+				flag = true;
+			}
+			else {
+				flag = false;
+			}
+			System.out.println(cont);
+			
+		} while (flag);
+	}
+
+}

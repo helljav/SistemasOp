@@ -15,7 +15,9 @@ def esPerfecto(num):
 cont=0
 
 Lista=json.loads(sys.argv[1])
-for i in range(int(sys.argv[2])):
+cantidad = json.loads(sys.argv[2])
+
+for i in range(cantidad):
 	if esPerfecto(Lista[i]):
 		#print(Lista[i])
 		cont += 1

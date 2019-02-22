@@ -67,7 +67,7 @@ public final class Ventana1 extends JFrame implements ActionListener {
 		Random na2 = new Random();
 		int nai, naj;
 		private final Color color;//Color de la primera ilera de colores
-		private int n_digitos = na.nextInt(((n*m)/5))+3;//Este valor debe de ser aleatorio por cada color entre 2 a (#total de casillas/#de colores) que es el numero de fragmentos que tendra un color
+		private int n_digitos = na.nextInt(((n*m)/5))+(n-1);//Este valor debe de ser aleatorio por cada color entre 2 a (#total de casillas/#de colores) que es el numero de fragmentos que tendra un color
 		/**
 		 * Contsructor de la clase cola_de_Digitos
 		 * @param color: Color de  cada columna

@@ -1,5 +1,6 @@
 import os
 import sys
+import time
 def main():
     print("\n\tEjecucion dinamica de procesos")
     print("\tSoy el padre de todos los proceos, mi pid es :",os.getpid())

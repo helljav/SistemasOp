@@ -14,8 +14,7 @@ void Simulacion (float [], char []);
 bool Turno_Jugador(float [], char [],float *, int *);
 bool Turno_Maquina(float [], char [],float *, int *);
 //Crei conveniente hacer los arreglos globales
-float numeroB[40];
-char palo[40];
+
 
 int main(int argc, char const *argv[]){
     Presentacion();
@@ -55,7 +54,9 @@ void Menu(){
     printf("Elige una de las anteriores opciones ");
 
 }
-void ElegirOpcion(int* opcionMenu){  
+void ElegirOpcion(int* opcionMenu){
+    float numeroB[40];
+    char palo[40];  
     if(*opcionMenu==1){
         system("clear");
         Juego(numeroB, palo);
@@ -84,8 +85,23 @@ void Juego(float numero[], char palos[]){
         Inicializar_Baraja(numero,palos);
         Barajear(numero,palos);
         
-        bool bandera;
-        bandera = Turno_Jugador(numero,palos,&puntaje_u,&i);
+        bool banderaJ;
+        bool banderaM;
+        banderaJ = Turno_Jugador(numero,palos,&puntaje_u,&i);
+        if(banderaJ==true){
+            printf("HAS PERDIDO LA PARTIDA, INSECTO, ¡¡VICTORIA PARA LA MAQUINA!!\n");
+        }else{
+            banderaM = Turno_Maquina(numero,palos,&puntaje_m,&i);
+            if(banderaM=true){
+                printf("HAS GANADO LA PARTIDA, REY DE LOS SAYAYIN\n");
+            }
+            else if(puntaje_m>=puntaje_u){
+                printf("HAS PERDIDO LA PARTIDA, INSECTO, ¡¡VICTORIA PARA LA MAQUINA!!\n");
+            }
+            else{
+                printf("HAS GANADO LA PARTIDA, REY DE LOS SAYAYIN\n");
+            }
+        }
         printf("¿Quieres jugar de nuevo?\n 1->[Si], 0->[No]\n");
         scanf("%d",&opc);
         if(opc==0){
@@ -138,7 +154,7 @@ void Inicializar_Baraja(float numero[], char palos[]){
 }
 
 void Barajear(float numero[], char palos[]){
-    int itera=rand()%979+21;
+    int itera=rand()%979+20;
     int c1=0;
 	int c2=0;
 	float Numaux=0;
@@ -202,25 +218,32 @@ bool Turno_Jugador(float numero[], char palos[],float *puntaje_u, int *recorre){
 }
 bool Turno_Maquina(float numero[], char palos[], float *puntaje_m, int *recorre){
     char paloAux[13];
-    char numAux[13];
+    float numAux[13];
     int cantidad =0;
     do{
         paloAux[cantidad] = palos[*recorre];
         numAux[cantidad] = numero[*recorre];
         *puntaje_m +=numAux[cantidad];
-        printf("Las cartas de la mauina son:\n");
+        printf("\t\nLas cartas de la maquina son: \n\n");
         for(int i = 0; i < cantidad+1; i++){
-            printf("%.2f de",numAux[i]);
-            switch(paloAux[i]){
-                  case 'O': printf("Oros\n"); 
-                  case 'C': printf("Copas\n");
-                  case 'E': printf("Espadas\n"); 
-                  case 'B': printf("Bastos\n");
-            }            
+            printf("\t%.2f de  ",numAux[i]);
+            if(paloAux[i]=='O'){
+                printf("Oros\n");                  
+            }
+            if(paloAux[i]=='C'){
+                printf("Copas\n");
+            } 
+            if(paloAux[i]=='E'){
+              printf("Espadas\n");
+            } 
+            if(paloAux[i]=='B'){
+                printf("Bastos\n");
+
+            }                    
         }
         if(*puntaje_m>7.5){
             return true;
-        }else if(*puntaje_m>6.5){
+        }else if(*puntaje_m>6){
             return false;
 
         }    

@@ -2,8 +2,10 @@
 #include <time.h>
 #include <stdlib.h> 
 #include <stdbool.h>
+
 //EN ESTA PARTE HAGO LOS LLAMADOS DE LOS PROTOTIPOS QUE VOY A UTILIZAR PARA QUE C LOS PUEDA
 //RECONOCER
+
 void Presentacion();
 void Menu();
 void ElegirOpcion(int *);
@@ -17,6 +19,7 @@ bool Turno_Maquina(float [], char [],float *, int *);
 
 
 int main(int argc, char const *argv[]){
+    srand(time(NULL));
     Presentacion();
     int opcionMenu =0;
     do{
@@ -90,7 +93,7 @@ void Juego(float numero[], char palos[]){
             printf("HAS PERDIDO LA PARTIDA, INSECTO, ¡¡VICTORIA PARA LA MAQUINA!!\n");
         }else{
             banderaM = Turno_Maquina(numero,palos,&puntaje_m,&i);
-            printf("%d",banderaM);
+            //printf("%d",banderaM);
             if(banderaM==true){
                 printf("HAS GANADO LA PARTIDA, REY DE LOS SAYAYIN\n");
             }
@@ -120,20 +123,13 @@ void Simulacion(float numero[], char palos[]){
     int recorre=0;
     printf("Cuantas simulaciones quieres realizar??\n");
 	scanf("%d", &NumSimulaciones);
-    for(int i = 0; i < NumSimulaciones; i++)
-    {
+    for(int i = 0; i < NumSimulaciones; i++){
         Puntoscpu1 =0;
         Puntoscpu2 =0;
         recorre=0;
         Inicializar_Baraja(numero,palos);
         Barajear(numero,palos);
-        for(int i = 0; i < 40; i++)
-        {
-            printf("%.2f ",numero[i]);
-        }
-        
-        for(int j = 0; j < 2; j++)
-        {   
+        for(int j = 0; j < 2; j++){   
             if(j==0){
                 do
                 {                
@@ -168,25 +164,30 @@ void Simulacion(float numero[], char palos[]){
                 
             
         }//fin segundo for
-        printf("Ronda %d puntos cpu1 %.2f  pu2 %.2f\n",i,Puntoscpu1,Puntoscpu2);
+         //    printf("Ronda %d puntos cpu1 %.2f  pu2 %.2f\n",i,Puntoscpu1,Puntoscpu2);
 
-       if(Puntoscpu1>7.5){
-           NumeroGanadocpu2++;
-       }
-       else{
-           if(Puntoscpu2>7.5){
-               NumGanadocpu1++;
-           }
-           else if(Puntoscpu2>=Puntoscpu1)
-           {
-               NumeroGanadocpu2++;
-           }
+        if(Puntoscpu1>7.5){
+            NumeroGanadocpu2++;
+        }
+        else{
+            if(Puntoscpu2>7.5){
+                NumGanadocpu1++;
+            }
+            else{
+                if(Puntoscpu2>=Puntoscpu1){
+                        //printf("Mayor o igual");
+                        NumeroGanadocpu2++;
+                    }
+                    else{
+                        NumGanadocpu1++;
+                    }
+
+            }
             
-        
-       }
+        }
        
 
-    }
+    }//Fin del primer for
      printf("Resultado de las %d simulaciones\n",NumSimulaciones);
 	  printf("	Veces que ganó CPU1 con la opción de platarse en 6.5: %d\n", NumGanadocpu1);
 	  printf("	Veces que ganó CPU2 con la opción de platarse en 6: %d\n\n", NumeroGanadocpu2);
@@ -233,7 +234,7 @@ void Inicializar_Baraja(float numero[], char palos[]){
 }
 
 void Barajear(float numero[], char palos[]){
-    srand(time(NULL));//Te permite generar los numeros aleatorios mas chido
+    //srand(time(NULL));//Te permite generar los numeros aleatorios mas chido
     int itera=rand()%979+20;
     int c1=0;
 	int c2=0;

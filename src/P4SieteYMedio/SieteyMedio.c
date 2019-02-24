@@ -2,7 +2,7 @@
 #include <time.h>
 #include <stdlib.h> 
 #include <stdbool.h>
-//EN ESTA PARTE HAGO LOS LLAMADOS DE LOS METODOS QUE VOY A UTILIZAR PARA QUE C LOS PUEDA
+//EN ESTA PARTE HAGO LOS LLAMADOS DE LOS PROTOTIPOS QUE VOY A UTILIZAR PARA QUE C LOS PUEDA
 //RECONOCER
 void Presentacion();
 void Menu();
@@ -67,10 +67,7 @@ void ElegirOpcion(int* opcionMenu){
         printf("Adios");
         exit(0);
     }
-    //  for(int i = 0; i < 40; i++)
-    // {
-    //     printf("%c",palo[i]);
-    // }
+   
     
 }
 
@@ -88,11 +85,13 @@ void Juego(float numero[], char palos[]){
         bool banderaJ;
         bool banderaM;
         banderaJ = Turno_Jugador(numero,palos,&puntaje_u,&i);
+        
         if(banderaJ==true){
             printf("HAS PERDIDO LA PARTIDA, INSECTO, ¡¡VICTORIA PARA LA MAQUINA!!\n");
         }else{
             banderaM = Turno_Maquina(numero,palos,&puntaje_m,&i);
-            if(banderaM=true){
+            printf("%d",banderaM);
+            if(banderaM==true){
                 printf("HAS GANADO LA PARTIDA, REY DE LOS SAYAYIN\n");
             }
             else if(puntaje_m>=puntaje_u){
@@ -115,8 +114,88 @@ void Juego(float numero[], char palos[]){
     
 }
 void Simulacion(float numero[], char palos[]){
-    Inicializar_Baraja(numero,palos);
-    Barajear(numero,palos);
+    float Puntoscpu1 =0, Puntoscpu2 =0;
+    int NumGanadocpu1 =0, NumeroGanadocpu2 = 0;
+    int NumSimulaciones =0;
+    int recorre=0;
+    printf("Cuantas simulaciones quieres realizar??\n");
+	scanf("%d", &NumSimulaciones);
+    for(int i = 0; i < NumSimulaciones; i++)
+    {
+        Puntoscpu1 =0;
+        Puntoscpu2 =0;
+        recorre=0;
+        Inicializar_Baraja(numero,palos);
+        Barajear(numero,palos);
+        for(int i = 0; i < 40; i++)
+        {
+            printf("%.2f ",numero[i]);
+        }
+        
+        for(int j = 0; j < 2; j++)
+        {   
+            if(j==0){
+                do
+                {                
+                    Puntoscpu1+=numero[recorre];
+                    recorre++;
+                    if(Puntoscpu1>7.5){
+                        break;
+                    }else if(Puntoscpu1>=6.5){
+                        break;
+                    }
+                
+                } while (1);
+
+            }
+            
+           
+            if(Puntoscpu1>7.5){
+                //NumeroGanadocpu2++;
+                break;
+            }
+            if(j==1){
+                do
+                {                
+                    Puntoscpu2+=numero[recorre];
+                    recorre++;
+                    if(Puntoscpu2>6){
+                        break;
+                    }                
+                } while (1);
+
+            }
+                
+            
+        }//fin segundo for
+        printf("Ronda %d puntos cpu1 %.2f  pu2 %.2f\n",i,Puntoscpu1,Puntoscpu2);
+
+       if(Puntoscpu1>7.5){
+           NumeroGanadocpu2++;
+       }
+       else{
+           if(Puntoscpu2>7.5){
+               NumGanadocpu1++;
+           }
+           else if(Puntoscpu2>=Puntoscpu1)
+           {
+               NumeroGanadocpu2++;
+           }
+            
+        
+       }
+       
+
+    }
+     printf("Resultado de las %d simulaciones\n",NumSimulaciones);
+	  printf("	Veces que ganó CPU1 con la opción de platarse en 6.5: %d\n", NumGanadocpu1);
+	  printf("	Veces que ganó CPU2 con la opción de platarse en 6: %d\n\n", NumeroGanadocpu2);
+	  printf("Presione una tecla para continuar...\n");
+ 	  char tec;
+ 	  scanf("%c", &tec);
+  	 scanf("%c", &tec);
+    
+    
 
 }
 
@@ -154,6 +233,7 @@ void Inicializar_Baraja(float numero[], char palos[]){
 }
 
 void Barajear(float numero[], char palos[]){
+    srand(time(NULL));//Te permite generar los numeros aleatorios mas chido
     int itera=rand()%979+20;
     int c1=0;
 	int c2=0;
@@ -171,7 +251,9 @@ void Barajear(float numero[], char palos[]){
         numero[c2] = Numaux;
     }
 }
-bool Turno_Jugador(float numero[], char palos[],float *puntaje_u, int *recorre){
+bool Turno_Jugador(float numero[], char palos[],float* puntaje_u, int* recorre){
+     printf("\t\t\t\t TURNO DEL JUGADOR\n\n");
+
     int opcion = 0;
     char paloAux[13];
     float numAux[13];
@@ -200,7 +282,7 @@ bool Turno_Jugador(float numero[], char palos[],float *puntaje_u, int *recorre){
 
             }        
         }
-        
+        *recorre+=1;
         printf("\tTu puntaje es: %.2f\n\n", *puntaje_u);
         if(*puntaje_u>7.5){
             printf("Te has exedido de 7.5, tu puntaje es: %.2f\n",*puntaje_u);
@@ -212,15 +294,18 @@ bool Turno_Jugador(float numero[], char palos[],float *puntaje_u, int *recorre){
             return false;
         }
         cantidad++;
-        *recorre+=1;
+        
     } while (1);    
 
 }
 bool Turno_Maquina(float numero[], char palos[], float *puntaje_m, int *recorre){
+    //printf("%d recorre" , *recorre);
+    printf("\t\t\t\t TURNO DE LA MAQUINA\n\n");
     char paloAux[13];
     float numAux[13];
     int cantidad =0;
     do{
+         printf("\t\t\t Ronda numero: %d \n", cantidad+1);
         paloAux[cantidad] = palos[*recorre];
         numAux[cantidad] = numero[*recorre];
         *puntaje_m +=numAux[cantidad];

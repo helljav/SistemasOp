@@ -26,17 +26,18 @@ int main(int argc, char const *argv[]){
 
 void ElegirOpcion(int* opcionMenu){  
     if(*opcionMenu==1){
+        //Variables que se utilizaran en el sumador
         int resultado[5]; // De 5 en caso de que el resultado sea de 5 caracteres
-        char numero1[5];
+        char numero1[5];//Es de tamaño 5 ya que se toma en cuenta el: /0
         char numero2[5];
         int num1[4];
         int num2[4];
 
-        inicio(numero1, numero2);        
-        charToInt(numero1, num1);        
+        inicio(numero1, numero2); //solicita las variables y las verifica       
+        charToInt(numero1, num1); //Convierte de cadena de caracteres a entero
         charToInt(numero2, num2);       
-        sumador(num1, num2, resultado);
-        imprime(numero1, numero2, resultado);
+        sumador(num1, num2, resultado);// Inica la suma
+        imprime(numero1, numero2, resultado);//Imprime el resultado
 
     }else if(*opcionMenu==2){
         system("clear");
@@ -111,7 +112,7 @@ int suma(int *ac, int a, int b){
 void charToInt(char num[], int numero[]){
     
     for (int i = 0; i <4; i++){
-            int aski = (int)num[i];
+            int aski = (int)num[i];//Te devuelve el codigo ascii
             if(aski == 49){
                 numero[i] = 1;
             }

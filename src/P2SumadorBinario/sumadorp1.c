@@ -6,10 +6,12 @@
 void Menu();
 void ElegirOpcion(int*);
 int comprobarDatos(char[]);
-void suma();
 void ingresaDatos(char []);
 void inicio(char [], char[]);
 void charToInt(char [], int[]);
+void sumador(int[], int[], int []);
+int suma(int *, int , int);
+void imprime(char [],char [], int []);
 
 
 int main(int argc, char const *argv[]){
@@ -24,20 +26,17 @@ int main(int argc, char const *argv[]){
 
 void ElegirOpcion(int* opcionMenu){  
     if(*opcionMenu==1){
+        int resultado[5]; // De 5 en caso de que el resultado sea de 5 caracteres
         char numero1[5];
         char numero2[5];
-        inicio(numero1, numero2);
-        printf("%s", numero2);
-        printf("\n%s", numero1);
-        printf("\n Conviertiendo a entero");
         int num1[4];
-        charToInt(numero1, num1);
         int num2[4];
-        charToInt(numero2, num2);
-        
-        
-        
-        suma();
+
+        inicio(numero1, numero2);        
+        charToInt(numero1, num1);        
+        charToInt(numero2, num2);       
+        sumador(num1, num2, resultado);
+        imprime(numero1, numero2, resultado);
 
     }else if(*opcionMenu==2){
         system("clear");
@@ -47,6 +46,68 @@ void ElegirOpcion(int* opcionMenu){
    
     
 }
+void sumador(int num1[], int num2[], int resultado[]){   
+    resultado[0] = 0;    
+    // num guarda el resultado de sumar dígito a dígito
+    int num,ac = 0;    
+    int N  = 5;
+
+    for(int i = N; i > 0; i--){ // El recorrido de los arreglos se hace al revés por regla
+	        // Se hace la suma y se guarda el resultado
+	        num = suma(&ac, num1[i-1], num2[i-1]);
+            //suma(ac,num1,num2);
+	        resultado[i] = num;
+            //printf("%d",num);
+
+        }
+    if(ac==1){
+        resultado[0]=1;
+    }
+}
+
+void imprime(char num1[],char num2[], int resultado[] ){
+    printf("   %s  ", num1);
+    printf("\n+");
+    printf("\n   %s  ", num2);
+    printf("\n__________\n  ");
+    for (int i = 0; i < 5; i++)
+    {
+        printf("%d", resultado[i]);
+    }
+    char tec;
+    scanf("%c",&tec);
+    printf("\t\tPresione cualquier tecla para continuar...\n");
+    scanf("%c",&tec);
+
+}
+int suma(int *ac, int a, int b){
+	if(*ac == 0){ // EL ACARREO ES 0
+		if((a + b) == 1){ //Casos: a = 0 y b = 1; a = 1 y b = 0
+			*ac = 0;
+			return 1;
+		}
+		if((a + b) == 2){ // Caso: a = b = 1
+			*ac = 1;
+			return 0;
+		}
+		*ac = 0; //Caso a = b = 0;
+		return 0;
+	}
+	else{ // EL ACARREO ES 1
+		if((a + b) == 1){ //Casos: a = 0 y b = 1; a = 1 y b = 0
+			*ac = 1;
+			return 0;
+		}
+		if((a + b) == 2){ // Caso: a = b = 1
+			*ac = 1;
+			return 1;
+		}
+		*ac = 0; //Caso a = b = 0;
+		return 1;
+	}
+    
+}
+
 void charToInt(char num[], int numero[]){
     
     for (int i = 0; i <4; i++){
@@ -57,7 +118,7 @@ void charToInt(char num[], int numero[]){
             else{
                 numero[i] = 0;
             }
-            printf("\n%d", numero[i]);
+            //printf("\n%d", numero[i]);
         }
 }
 void inicio(char numero1[], char numero2[]){
@@ -85,10 +146,7 @@ void ingresaDatos(char numero[]){
         }
     }
 
-void suma(){
-    
-    
-}
+
 
 int comprobarDatos(char numero[]){
     int tamanio = 0;
@@ -109,6 +167,7 @@ int comprobarDatos(char numero[]){
 }
 
 void Menu(){
+    system("clear");
     printf("Bienvenido al sumador binario de 4 bits\n");
     printf("1. Realizar una suma\n");
     printf("2. Salir del programa\n");

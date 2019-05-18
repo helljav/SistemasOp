@@ -75,8 +75,7 @@ void ElegirOpcion(int* opcionMenu){
 }
 
 
-void Juego(float numero[], char palos[]){
-   
+void Juego(float numero[], char palos[]){   
     int opc=0;
     do
     {
@@ -109,12 +108,8 @@ void Juego(float numero[], char palos[]){
         if(opc==0){
             break;
         }
-        system("clear");   
-
-        
-    } while (true);
-    
-    
+        system("clear");        
+    } while (true);    
 }
 void Simulacion(float numero[], char palos[]){
     float Puntoscpu1 =0, Puntoscpu2 =0;
@@ -258,8 +253,7 @@ bool Turno_Jugador(float numero[], char palos[],float* puntaje_u, int* recorre){
     int opcion = 0;
     char paloAux[13];
     float numAux[13];
-    int cantidad =0;
-    
+    int cantidad =0;   
     
     do{
         printf("\t\t\t Ronda numero: %d \n", cantidad+1);
@@ -294,10 +288,8 @@ bool Turno_Jugador(float numero[], char palos[],float* puntaje_u, int* recorre){
         if(opcion==0){
             return false;
         }
-        cantidad++;
-        
-    } while (1);    
-
+        cantidad++;        
+    } while (1);
 }
 bool Turno_Maquina(float numero[], char palos[], float *puntaje_m, int *recorre){
     //printf("%d recorre" , *recorre);

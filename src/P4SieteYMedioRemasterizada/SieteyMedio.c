@@ -267,7 +267,8 @@ bool Turno_Jugador(float numero[], char palos[],float* puntaje_u, int* recorre, 
         printf("\t\t\t Ronda numero: %d \n", cantidad+1);
         paloAux[cantidad] = palos[*recorre];
         numAux[cantidad] = numero[*recorre];
-        cartas_acom[cantidad] = numero[recorre];
+        cartas_acom[cantidad] = numero[*recorre];
+        *puntaje_u += numAux[cantidad];
 
         printf("\t\nTus cartas hasta el momento son:\n\n");
         for(int i = 0; i < cantidad+1; i++){
@@ -287,7 +288,7 @@ bool Turno_Jugador(float numero[], char palos[],float* puntaje_u, int* recorre, 
             }        
         }
         //Modificamos nuestros indices y apuntadores
-        puntaje_u += numAux[cantidad];
+        
         *recorre+=1;//Seria nuestra i
         cantidad++;
         *total_c-=1;//cantidad de cartas que aun hay en la baraja 
@@ -300,6 +301,13 @@ bool Turno_Jugador(float numero[], char palos[],float* puntaje_u, int* recorre, 
         printf("¿Quieres otra carta?\n 1->[Si], 0->[No]:  ");
         scanf("%d",&opcion);
         if(opcion==0){
+            cartas_acom[*recorre-1]=0;
+            for (int j = 0; j < *recorre; j++)
+            {
+                *suma += cartas_acom[j];
+                printf("%.2f\n",cartas_acom[j]);
+            }
+            
             return false;
         }
                

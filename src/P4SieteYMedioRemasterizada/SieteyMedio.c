@@ -80,12 +80,14 @@ void Juego(float numero[], char palos[]){
     do
     {
         // Declarar mas variables para poder hacer la probabilidad
-        float cartas_acom[13]; //cartas que tiene el jugador en su mano
+        float cartas_acom[40]; //cartas que tiene el jugador en su mano
         float suma=0; //Suama del arreglo de cartas_acom
         int i = 0;//variable recorre (recorre la baraja)
         float puntaje_u=0, puntaje_m=0;//Puntaje de jugador y puntaje de la maquina
         int total_c=40;//Resto de las cartas que quedan en la baraja
-        //float prob_ap[10];
+        float prob_ap[10];
+        float cont[2][10];
+    
 
 
         Inicializar_Baraja(numero,palos);
@@ -119,6 +121,8 @@ void Juego(float numero[], char palos[]){
         system("clear");        
     } while (true);    
 }
+
+
 void Simulacion(float numero[], char palos[]){
     float Puntoscpu1 =0, Puntoscpu2 =0;
     int NumGanadocpu1 =0, NumeroGanadocpu2 = 0;
@@ -255,6 +259,7 @@ void Barajear(float numero[], char palos[]){
         numero[c2] = Numaux;
     }
 }
+
 bool Turno_Jugador(float numero[], char palos[],float* puntaje_u, int* recorre, float cartas_acom[], float *suma, int * total_c){
      printf("\t\t\t\t TURNO DEL JUGADOR\n\n");
 
@@ -305,8 +310,8 @@ bool Turno_Jugador(float numero[], char palos[],float* puntaje_u, int* recorre, 
             for (int j = 0; j < *recorre; j++)
             {
                 *suma += cartas_acom[j];
-                printf("%.2f\n",cartas_acom[j]);
             }
+            printf("%f",*suma);
             
             return false;
         }

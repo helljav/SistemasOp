@@ -16,7 +16,7 @@ void Simulacion (float [], char []);
 bool Turno_Jugador(float [], char [],float *, int *,float [], float *,int *);
 bool Turno_Maquina(float [], char [],float *, int *, float [], float *, int * , float [], float [2][10]);
 void calcProb(float *, float [], int *, float [], int *);
-void cartasX(float *, float, int *, float []);
+void cartaX(float *, float, int *, float []);
 //Crei conveniente hacer los arreglos globales
 
 
@@ -260,17 +260,17 @@ void Barajear(float numero[], char palos[]){
 }
 
 void calcProb(float *suma, float cartas_acom[], int *total_c, float prob_ap[], int *contx){
-    
+    *contx =0;
     
     //printf("\n%f suma desde calc prob:  ", suma);
-    cartasX(suma,0.5,contx,prob_ap);
-    cartasX(suma,1.0,contx,prob_ap);
-    cartasX(suma,2.0,contx,prob_ap);
-    cartasX(suma,3.0,contx,prob_ap);
-    cartasX(suma,4.0,contx,prob_ap);
-    cartasX(suma,5.0,contx,prob_ap);
-    cartasX(suma,6.0,contx,prob_ap);
-    cartasX(suma,7.0,contx,prob_ap);
+    cartaX(suma,0.5,contx,prob_ap);
+    cartaX(suma,1.0,contx,prob_ap);
+    cartaX(suma,2.0,contx,prob_ap);
+    cartaX(suma,3.0,contx,prob_ap);
+    cartaX(suma,4.0,contx,prob_ap);
+    cartaX(suma,5.0,contx,prob_ap);
+    cartaX(suma,6.0,contx,prob_ap);
+    cartaX(suma,7.0,contx,prob_ap);
 
     printf("desde metodo calc proba\n");
     for (int i = 0; i <8; i++){
@@ -279,12 +279,11 @@ void calcProb(float *suma, float cartas_acom[], int *total_c, float prob_ap[], i
     
 }
 
-void cartasX(float *suma, float carta, int *contx, float porb_ap[]){
-    *contx =0;
-    
+void cartaX(float *suma, float carta, int *contx, float porb_ap[]){
+   
+    //printf("\nEntre en el if de cartas X suma mas carta %f", (*suma+carta));
     if((*suma + carta) <= 7.5){
-        //printf("\nEntre en el if de cartas X %f", *suma);
-        printf("\ncontx %d ",*contx);
+        //printf("\nsuma: %f contador:  %d ",*suma, *contx);
         porb_ap[*contx]=carta;
         *contx += 1;
     }
@@ -351,14 +350,14 @@ bool Turno_Jugador(float numero[], char palos[],float* puntaje_u, int* recorre, 
                
     } while (1);
 }
-int contx=0;
+
 bool Turno_Maquina(float numero[], char palos[], float *puntaje_m, int *recorre, float cartas_acom[], float *suma, int * total_c, float prob_ap[], float cont[2][10]){
     //printf("%d recorre" , *recorre);
     printf("\t\t\t\t TURNO DE LA MAQUINA\n\n");
     char paloAux[13];
     float numAux[13];
     int cantidad =0;
-    calcProb(suma, cartas_acom,total_c,prob_ap, &contx);
+    int contx;
     
     do{
          printf("\t\t\t Ronda numero: %d \n", cantidad+1);
@@ -382,7 +381,8 @@ bool Turno_Maquina(float numero[], char palos[], float *puntaje_m, int *recorre,
 
             }                    
         }
-        printf("\nsuma desde turno maquina:  %f   ", *suma);
+        calcProb(suma, cartas_acom,total_c,prob_ap, &contx);
+        //printf("\nsuma desde turno maquina:  %f   ", *suma);
         
         if(*puntaje_m>7.5){
             return true;

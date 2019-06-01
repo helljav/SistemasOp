@@ -14,7 +14,9 @@ void Inicializar_Baraja(float [], char []);
 void Barajear(float [], char []);
 void Simulacion (float [], char []);
 bool Turno_Jugador(float [], char [],float *, int *,float [], float *,int *);
-bool Turno_Maquina(float [], char [],float *, int *);
+bool Turno_Maquina(float [], char [],float *, int *, float [], float *, int * , float [], float [2][10]);
+void calcProb(float *, float [], int *, float [], int *);
+void cartasX(float *, float, int *, float []);
 //Crei conveniente hacer los arreglos globales
 
 
@@ -85,11 +87,8 @@ void Juego(float numero[], char palos[]){
         int i = 0;//variable recorre (recorre la baraja)
         float puntaje_u=0, puntaje_m=0;//Puntaje de jugador y puntaje de la maquina
         int total_c=40;//Resto de las cartas que quedan en la baraja
-        float prob_ap[10];
+        float prob_ap[8];
         float cont[2][10];
-    
-
-
         Inicializar_Baraja(numero,palos);
         Barajear(numero,palos);
         //Estas variables tendran el puntaje de cada jugador
@@ -101,7 +100,7 @@ void Juego(float numero[], char palos[]){
         if(banderaJ==true){
             printf("HAS PERDIDO LA PARTIDA, INSECTO, ¡¡VICTORIA PARA LA MAQUINA!!\n");
         }else{
-            banderaM = Turno_Maquina(numero,palos,&puntaje_m,&i);
+            banderaM = Turno_Maquina(numero,palos,&puntaje_m,&i,cartas_acom,&suma,&total_c,prob_ap,cont);
             //printf("%d",banderaM);
             if(banderaM==true){
                 printf("HAS GANADO LA PARTIDA, REY DE LOS SAYAYIN\n");
@@ -260,6 +259,38 @@ void Barajear(float numero[], char palos[]){
     }
 }
 
+void calcProb(float *suma, float cartas_acom[], int *total_c, float prob_ap[], int *contx){
+    
+    
+    //printf("\n%f suma desde calc prob:  ", suma);
+    cartasX(suma,0.5,contx,prob_ap);
+    cartasX(suma,1.0,contx,prob_ap);
+    cartasX(suma,2.0,contx,prob_ap);
+    cartasX(suma,3.0,contx,prob_ap);
+    cartasX(suma,4.0,contx,prob_ap);
+    cartasX(suma,5.0,contx,prob_ap);
+    cartasX(suma,6.0,contx,prob_ap);
+    cartasX(suma,7.0,contx,prob_ap);
+
+    printf("desde metodo calc proba\n");
+    for (int i = 0; i <8; i++){
+        printf("\n %f", prob_ap[i]);        
+    }
+    
+}
+
+void cartasX(float *suma, float carta, int *contx, float porb_ap[]){
+    *contx =0;
+    
+    if((*suma + carta) <= 7.5){
+        //printf("\nEntre en el if de cartas X %f", *suma);
+        printf("\ncontx %d ",*contx);
+        porb_ap[*contx]=carta;
+        *contx += 1;
+    }
+
+}
+
 bool Turno_Jugador(float numero[], char palos[],float* puntaje_u, int* recorre, float cartas_acom[], float *suma, int * total_c){
      printf("\t\t\t\t TURNO DEL JUGADOR\n\n");
 
@@ -307,23 +338,28 @@ bool Turno_Jugador(float numero[], char palos[],float* puntaje_u, int* recorre, 
         scanf("%d",&opcion);
         if(opcion==0){
             cartas_acom[*recorre-1]=0;
+            
+            //printf("\nturno maquina recorriendo cartas_acom\n");
             for (int j = 0; j < *recorre; j++)
             {
                 *suma += cartas_acom[j];
-            }
-            printf("%f",*suma);
+               // printf("\n%f", cartas_acom[j]);
+            }           
             
             return false;
         }
                
     } while (1);
 }
-bool Turno_Maquina(float numero[], char palos[], float *puntaje_m, int *recorre){
+int contx=0;
+bool Turno_Maquina(float numero[], char palos[], float *puntaje_m, int *recorre, float cartas_acom[], float *suma, int * total_c, float prob_ap[], float cont[2][10]){
     //printf("%d recorre" , *recorre);
     printf("\t\t\t\t TURNO DE LA MAQUINA\n\n");
     char paloAux[13];
     float numAux[13];
     int cantidad =0;
+    calcProb(suma, cartas_acom,total_c,prob_ap, &contx);
+    
     do{
          printf("\t\t\t Ronda numero: %d \n", cantidad+1);
         paloAux[cantidad] = palos[*recorre];
@@ -346,6 +382,8 @@ bool Turno_Maquina(float numero[], char palos[], float *puntaje_m, int *recorre)
 
             }                    
         }
+        printf("\nsuma desde turno maquina:  %f   ", *suma);
+        
         if(*puntaje_m>7.5){
             return true;
         }else if(*puntaje_m>6){

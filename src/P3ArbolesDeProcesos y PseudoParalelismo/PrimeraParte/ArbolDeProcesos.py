@@ -6,7 +6,7 @@ import sys
 import time
 import getpass
 
-def main(argv):
+def main(argv):    
     print("")
     prof = int (input("Proporciona la profundidad: "))    
     ramas = int(input("Proporciona el numero de hojas: "))

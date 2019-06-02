@@ -91,6 +91,7 @@ void Juego(float numero[], char palos[]){
         float prob_ap[8];
         float mprob[2][8];
         int contx=0;
+        reinicia(cartas_acom, prob_ap,  mprob);
         Inicializar_Baraja(numero,palos);
         Barajear(numero,palos);
         //Estas variables tendran el puntaje de cada jugador
@@ -119,7 +120,6 @@ void Juego(float numero[], char palos[]){
         if(opc==0){
             break;
         }
-        reinicia(cartas_acom, prob_ap,  mprob);
         system("clear");        
     } while (true);    
 }
@@ -139,10 +139,7 @@ void reinicia(float cartas_acom[], float prob_ap[], float mprob[2][8]){
                 mprob[i][j] = 0;
            }          
            
-       }
-        
-        
-        
+       }      
 }
 
 
@@ -286,6 +283,7 @@ void Barajear(float numero[], char palos[]){
 void calcProb(float *suma, float cartas_acom[], int *total_c, float prob_ap[], int *contx, float mprob[2][8]){
     *contx =0;
     float frecuencia =0.0;
+    float suma_prob = 0.0;
     
     //posibles candidatos de la carta X
     cartaX(suma,0.5,contx,prob_ap);
@@ -312,7 +310,7 @@ void calcProb(float *suma, float cartas_acom[], int *total_c, float prob_ap[], i
         frecuencia = 0.0;                     
     }
     //sacando las P(Bi)
-    for (int i = 0; i <7; i++){
+    for (int i = 0; i <8; i++){
        if(mprob[0][i]>0){
            if(i==0){
             mprob[0][i] = ((12-mprob[0][i])/ *total_c);
@@ -320,9 +318,34 @@ void calcProb(float *suma, float cartas_acom[], int *total_c, float prob_ap[], i
            else{
             mprob[0][i] = ((4-mprob[0][i])/ *total_c);
            }
-       }             
+       }
+       else if(mprob[1][i]>0){
+           float figura = 12.0/ *total_c;
+           float otra = 4.0 / *total_c;           
+           if(i==0){
+            mprob[0][i] = figura;
+           }
+           else{
+            mprob[0][i] = otra;
+           }
+           
+       }
+       else{
+           mprob[0][i] = 0;
+       }      
+        suma_prob = suma_prob + mprob [0][i];             
    }
-   printf("\nTotal de cartas %d\n", *total_c);
+   //Aqui ya calculamos bayes
+    printf("\nMatriz de bayes");
+   for (int i = 0; i < 8; i++)
+   {
+        if(suma_prob!=0){
+            mprob [0][i] = mprob [0][i] / suma_prob;
+        }
+        printf("%f  ",mprob[0][i]);
+   }
+
+   printf("\n\nImprimiendo toda la raiz, Total de cartas restantes:  %d\n", *total_c);
     for (int i = 0; i <2; i++){
         for (int j = 0; j <8; j++){
             printf("%f  ", mprob[i][j]);
@@ -338,10 +361,8 @@ void cartaX(float *suma, float carta, int *contx, float porb_ap[]){
     //Si la suma de los valores de las cartas visibles, mas la posible carta X es menor que 7.5
     // El valor de "Carta", es una candidata a la carta X, entonces la guardamos en el arreglo
    float objetivo = (*suma +carta);
-   printf("\nsuma %f\n", *suma);
     if(objetivo <= 7.5){
         porb_ap[*contx]=carta;
-        printf("\ncarta %f\n", carta);
         *contx += 1;
     }
 

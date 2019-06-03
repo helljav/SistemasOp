@@ -473,16 +473,28 @@ bool Turno_Maquina(float numero[], char palos[], float *puntaje_m, int *recorre,
 
 
 bool iaMaquina(float cartas_acom[], float *puntaje_m, float prob_ap[], float mprob[2][8], int *total_c){
-    float pg=0.1,pp=0;
+    float pg=0.0;
+    float pp=0;
     float difpuntos[8];
     // puntaje_m va a se nuestro pg
     //mprob[0][i] (P(Bi|A)) va a ser nuestro pp
 
     // Determinamos el valor de pg
     for (int i = 0; i <8; i++){
-        if(*puntaje_m == mprob[0][i]){
-            pg = mprob[0][i];
-        }                    
+        if(i==0){
+            if(*puntaje_m >= (mprob[1][i] + 0.5)){
+                 pg =  mprob[0][i];
+                 break;
+            }    
+        }
+        else{
+             if(*puntaje_m >= (mprob[1][i] + i)){
+                pg = mprob[0][i];
+                break;
+            }
+        }
+      
+                       
     }
     printf("\n\n soy pg: %f\n", pg);
 
@@ -511,7 +523,7 @@ bool iaMaquina(float cartas_acom[], float *puntaje_m, float prob_ap[], float mpr
         }
         difpuntos[i] = difpuntos[i] / (*total_c + 1.0);
         pp = pp + difpuntos[i];
-        printf("\n soy difpuntos[i]: %f", difpuntos[i]);
+       // printf("\n soy difpuntos[i]: %f", difpuntos[i]);
     }
 
     printf("\nsoy pp %f\n", pp);
@@ -525,7 +537,7 @@ bool iaMaquina(float cartas_acom[], float *puntaje_m, float prob_ap[], float mpr
         }
         
     }
-    return true;  
+    return false;  
     
     
 

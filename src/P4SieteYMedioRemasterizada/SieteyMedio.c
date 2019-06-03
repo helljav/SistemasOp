@@ -45,7 +45,8 @@ void Presentacion(){
     printf("\n\t\t\t ****      **    **    **        **");	
 	printf("\n\n\tSIMULACION DEL JUEGO SIETE Y MEDIO\n");
     printf("\tAUTOR: CARRILLO PACHECO FRANCISCO JAVIER\t\t2143008102\n");
-	printf("\tFECHA DE CREACION: 25/FEBRERO/2019\n\n");
+    printf("\t\tRAYA CHULA RICARDO\t\t0\n");
+    printf("\tFECHA DE CREACION V1.0.0.5: 02/JUNIO/2019\n\n");
 	printf("\t\tPresione cualquier tecla para jugar...\n");
 	char tec;
 	scanf("%c",&tec);
@@ -295,7 +296,7 @@ void calcProb(float *suma, float cartas_acom[], int *total_c, float prob_ap[], i
     cartaX(suma,6.0,contx,prob_ap);
     cartaX(suma,7.0,contx,prob_ap);
     
-    
+    printf("\nconteo total_c %d", *total_c);
 
     //Se sacamos la frecuencia de las cartas acomuladas y la asignamos en la matriz
     for (int i = 0; i <*contx; i++){
@@ -313,15 +314,15 @@ void calcProb(float *suma, float cartas_acom[], int *total_c, float prob_ap[], i
     for (int i = 0; i <8; i++){
        if(mprob[0][i]>0){
            if(i==0){
-            mprob[0][i] = ((12-mprob[0][i])/ *total_c);
+            mprob[0][i] = ((12-mprob[0][i])/ (*total_c + 1.0));
            }
            else{
-            mprob[0][i] = ((4-mprob[0][i])/ *total_c);
+            mprob[0][i] = ((4-mprob[0][i])/ (*total_c + 1.0));
            }
        }
        else if(mprob[1][i]>0){
-           float figura = 12.0/ *total_c;
-           float otra = 4.0 / *total_c;           
+           float figura = 12.0/ (*total_c + 1.0);
+           float otra = 4.0 / (*total_c + 1.0);           
            if(i==0){
             mprob[0][i] = figura;
            }
@@ -333,7 +334,7 @@ void calcProb(float *suma, float cartas_acom[], int *total_c, float prob_ap[], i
        else{
            mprob[0][i] = 0;
        }      
-        suma_prob = suma_prob + mprob [0][i];             
+        suma_prob = suma_prob + mprob [0][i]; //(P(A))            
    }
    //Aqui ya calculamos bayes
     printf("\nMatriz de bayes");

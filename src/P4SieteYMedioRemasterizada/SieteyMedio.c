@@ -297,7 +297,7 @@ void calcProb(float *suma, float cartas_acom[], int *total_c, float prob_ap[], i
     cartaX(suma,6.0,contx,prob_ap);
     cartaX(suma,7.0,contx,prob_ap);
     
-    printf("\nconteo total_c %d", *total_c);
+    //printf("\nconteo total_c %d", *total_c);
 
     //Se sacamos la frecuencia de las cartas acomuladas y la asignamos en la matriz
     for (int i = 0; i <*contx; i++){
@@ -499,6 +499,7 @@ bool iaMaquina(float cartas_acom[], float *puntaje_m, float prob_ap[], float mpr
     printf("\n\n soy pg: %f\n", pg);
 
     //Determinamos el valor de pp
+    //Posibibles cartas donde te pasarias del 7.5 si pides una mas
     for (int i = 0; i < 8; i++)
     {
         if(i==0.0){

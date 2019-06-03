@@ -444,6 +444,16 @@ bool Turno_Maquina(float numero[], char palos[], float *puntaje_m, int *recorre,
         numAux[cantidad] = numero[*recorre];
         *puntaje_m +=numAux[cantidad];
         printf("\t\nLas cartas de la maquina son: \n\n");
+
+        // printf("\t\t\t Ronda numero: %d \n", cantidad+1);
+        // paloAux[cantidad] = palos[*recorre];
+        // numAux[cantidad] = numero[*recorre];
+        // cartas_acom[cantidad] = numero[*recorre];
+        // *puntaje_u += numAux[cantidad];
+
+
+
+
         for(int i = 0; i < cantidad+1; i++){
             printf("\t%.2f de  ",numAux[i]);
             if(paloAux[i]=='O'){

@@ -367,7 +367,7 @@ bool Turno_Jugador(float numero[], char palos[],float* puntaje_u, int* recorre, 
     int opcion = 0;
     char paloAux[13];//palos que se le dara al jugador
     float numAux[13];//numero de carta que se le dara al jugador
-    int cantidad =0;//indice que recorre a los arreglos auxiliares  seria nuestra j  
+    int cantidad =0;//indice que recorre a los arreglos auxiliares  
     
     do{
         printf("\t\t\t Ronda numero: %d \n", cantidad+1);
@@ -427,7 +427,7 @@ bool Turno_Maquina(float numero[], char palos[], float *puntaje_m, int *recorre,
     printf("\t\t\t\t TURNO DE LA MAQUINA\n\n");
     char paloAux[13];
     float numAux[13];
-    int cantidad =0;//j
+    int cantidad =0;
     
     
     do{

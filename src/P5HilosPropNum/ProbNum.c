@@ -12,25 +12,45 @@ void * t_control_total(void *arg);
 void * t_perfectos(void *arg);
 void * t_fuertes(void *arg);
 void * t_primos(void *arg);
+void crearArr(int );
 int iteraciones;
+int *arrNum;
 
-int main(int argc, char **argv[]){
+int main(int argc, char const *argv[]){
     srand(time(NULL));
-    iteraciones = atoi(argv[1]);//Se carga el numero que resive como parametro desde que se ejecuta    
+    iteraciones = atoi(argv[1]);//Se carga el numero que recibe como parametro desde que se ejecuta
+    crearArr(iteraciones);
+    //Creacion de hilos maestros 
     pthread_t t_maestros[3];
-    int retrasos_ale[5];//5 representa el numero de hilos, se debe de modificar la implementacion para esta practica
-    //llenamos el arreglo con los numeros aleatorios
-    for (int i = 0; i < 5; i++){
-        num_ale[i] = rand()%1000000%
+    for (long i = 0; i < 3; i++){
+        pthread_create(&t_maestros[i],NULL,t_control_total,(void *)i);
+    }
+    for (long i = 0; i < 3; i++){
+        pthread_join(t_maestros[i],NULL);
     }
     
+    
+    
    
+}
+
+void crearArr(int iteraciones){
+    arrNum = (int *)malloc(iteraciones*sizeof(int));
+    for (int i = 1; i < iteraciones+1; i++){
+        arrNum[i]=i;
+        printf("%d\n", arrNum[i]);
+    }
 }
 
 
 void * t_control_total(void *arg){
     // Casteo para obtener el tid del hilo
     int tid = *((int *)(&arg));
+    printf("Hola soy el hilo con el tid: %d", tid);
+
+    int numHilos;//numero de hilos bebes
+
+    pthread_exit(NULL);
 }
 
 void * t_perfectos(void *arg){
@@ -44,6 +64,7 @@ void * t_perfectos(void *arg){
     //     return True
     // else:
     //     return False
+    pthread_exit(NULL);
 }
 void * t_primos(void *arg){
     // En python3
@@ -54,4 +75,5 @@ void * t_primos(void *arg){
     //     if num % i == 0:    
     //         return False
     // return True 
+    pthread_exit(NULL);
 }

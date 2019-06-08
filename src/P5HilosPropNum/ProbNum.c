@@ -12,58 +12,94 @@ void * t_control_total(void *arg);
 void * t_perfectos(void *arg);
 void * t_fuertes(void *arg);
 void * t_primos(void *arg);
-void crearArr(int );
+
+#define N_Maestros 3
+#define N_Esclavos  100
 int iteraciones;
-int *arrNum;
+int contPerfectos[N_Esclavos];
+int contDuros [N_Esclavos];
+int contPrimos [N_Esclavos];
+int resultadoMaestros[N_Maestros];
+
+
 
 int main(int argc, char const *argv[]){
     srand(time(NULL));
     iteraciones = atoi(argv[1]);//Se carga el numero que recibe como parametro desde que se ejecuta
-    crearArr(iteraciones);
+   
     //Creacion de hilos maestros 
-    pthread_t t_maestros[3];
-    for (long i = 0; i < 3; i++){
+    pthread_t t_maestros[N_Maestros];
+    for (long i = 0; i < N_Maestros; i++){
         pthread_create(&t_maestros[i],NULL,t_control_total,(void *)i);
     }
-    for (long i = 0; i < 3; i++){
+    for (long i = 0; i < N_Maestros; i++){
         pthread_join(t_maestros[i],NULL);
-    }
-    
-    
-    
+    }  
    
 }
 
-void crearArr(int iteraciones){
-    arrNum = (int *)malloc(iteraciones*sizeof(int));
-    for (int i = 1; i < iteraciones+1; i++){
-        arrNum[i]=i;
-        printf("%d\n", arrNum[i]);
-    }
-}
+
 
 
 void * t_control_total(void *arg){
     // Casteo para obtener el tid del hilo
     int tid = *((int *)(&arg));
-    printf("Hola soy el hilo con el tid: %d", tid);
-
-    int numHilos;//numero de hilos bebes
+    
+    printf("Hola soy el maestro con el tid: %d\n",tid);
+    if(tid==0){
+            printf("TiD-0: Mitrabajo es buscar numeros perfectos\n");
+            printf("TiD-0: Numero de hijos lanzados: %d\n", N_Esclavos);
+            pthread_t t_esclavos[N_Esclavos];
+            int total_perfc=0;
+            for (long i = 0; i < N_Esclavos; i++){
+                pthread_create(&t_esclavos[i],NULL,t_perfectos,(void *)i);
+            }
+            for (long i = 0; i < N_Esclavos; i++){
+                pthread_join(t_esclavos[i],NULL);
+            }
+            for (long i = 0; i < N_Esclavos; i++){
+                total_perfc += contPerfectos[i];    
+            }
+            printf("Numero perfectos encontrados: %d", total_perfc);
+            
+          
+        }
+    if(tid==1){
+        printf("TiD-1: Mitrabajo es buscar numeros primos\n");
+        printf("TiD-1: Numero de hijos lanzados: %d\n", N_Esclavos);
+    }
+    if(tid==2){
+        printf("TiD-2: Mitrabajo es buscar numeros duros\n");
+        printf("TiD-2: Numero de hijos lanzados: %d\n", N_Esclavos);
+    }
+    
+   
 
     pthread_exit(NULL);
 }
 
 void * t_perfectos(void *arg){
-    // En python3
-    // def esPerfecto(num):	
-    // sumatorio=0
-    // for i in range(1,num):
-    //         if num%i==0:
-    //             sumatorio=sumatorio+i
-    // if sumatorio==num:
-    //     return True
-    // else:
-    //     return False
+    int tid_E = *((int *)(&arg));
+    contPerfectos[tid_E]=0;
+    int inicio = (tid_E * (iteraciones/N_Esclavos)) + 1;
+    int final = (iteraciones/N_Esclavos) + (inicio + 1);
+    int n_aux, suma;
+
+    while (inicio <= final){
+        n_aux = inicio-1;
+        suma = 0;
+        while (suma < inicio && n_aux > 0){
+            if (inicio % n_aux == 0){
+                suma += n_aux;
+            }
+            n_aux--;
+        }
+        if (suma == inicio){
+            contPerfectos[tid_E] += 1;
+        }
+        inicio++;
+    }
+    
     pthread_exit(NULL);
 }
 void * t_primos(void *arg){

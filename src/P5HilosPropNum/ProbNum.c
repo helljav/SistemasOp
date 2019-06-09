@@ -141,7 +141,7 @@ void * t_perfectos(void *arg){
 void * t_primos(void *arg){
     int tid_E = *((int *)(&arg));
     contPrimos[tid_E]=0;
-    int inicio = (tid_E * (iteraciones/N_Esclavos)) + 1;
+    int inicio = (tid_E * (iteraciones/N_Esclavos));
     int final = (iteraciones/N_Esclavos) + (inicio);
 
     for (int i = inicio; i < final; i++){
@@ -170,7 +170,7 @@ bool esPrimo(int num){
 void * t_fuertes(void *arg){
     int tid_E = *((int *)(&arg));
     contFuertes[tid_E]=0;
-    int inicio = (tid_E * (iteraciones/N_Esclavos)) + 1;
+    int inicio = (tid_E * (iteraciones/N_Esclavos));
     int final = (iteraciones/N_Esclavos) + (inicio);
     char buf[BUFSIZ];
 
@@ -182,6 +182,7 @@ void * t_fuertes(void *arg){
          }                                                             //utilizo el charToInt para ver que digito es, ya que lo converti anteriormente a caracteres
          if(comprobar ==i){
              contFuertes[tid_E] += 1;
+             //printf("\n i: %d comprobar: %d\n",i,comprobar);
          }
          comprobar =0;         
     }   

@@ -18,6 +18,7 @@ bool Turno_Maquina(float [], char [],float *, int *, float [], float *, int * , 
 void calcProb(float *, float [], int *, float [], int *, float [2][8]);
 void cartaX(float *, float, int *, float []);
 void reinicia(float cartas_acom[], float prob_ap[], float mprob[2][8]);
+bool iaMaquina(float cartas_acom[], float *puntaje_m, float prob_ap[], float mprob[2][8], int *total_c);
 //Crei conveniente hacer los arreglos globales
 
 
@@ -38,15 +39,16 @@ void Presentacion(){
     system("clear");
     printf("\n");
 
-    printf("\n\t\t\t**   **      ****      **        **");
-    printf("\n\t\t\t**   **    **    **    ***      ***");
-    printf("\n\t\t\t**   **    ********    **   **   **");
-    printf("\n\t\t\t*******    **    **    **        **");
-    printf("\n\t\t\t ****      **    **    **        **");	
-	printf("\n\n\tSIMULACION DEL JUEGO SIETE Y MEDIO\n");
-    printf("\tAUTOR: CARRILLO PACHECO FRANCISCO JAVIER\t\t2143008102\n");
-	printf("\tFECHA DE CREACION: 25/FEBRERO/2019\n\n");
-	printf("\t\tPresione cualquier tecla para jugar...\n");
+    printf("\n\t\t\t     **   **      ****      **        **");
+    printf("\n\t\t\t     **   **    **    **    ***      ***");
+    printf("\n\t\t\t     **   **    ********    **   **   **");
+    printf("\n\t\t\t     *******    **    **    **        **");
+    printf("\n\t\t\t      ****      **    **    **        **");	
+    printf("\n\n\n\t     SIMULACION DEL JUEGO SIETE Y MEDIO\n");
+    printf("\n\t     AUTOR: °CARRILLO PACHECO FRANCISCO JAVIER\t\t2143008102\n");
+    printf("\t\t    °RAYA CHULA RICARDO\t\t0\n");
+    printf("\t     FECHA DE CREACION V1.0.0.5: 02/JUNIO/2019\n\n");
+    printf("\t\t     Presione ENTER para jugar...\n");
 	char tec;
 	scanf("%c",&tec);
 
@@ -91,6 +93,7 @@ void Juego(float numero[], char palos[]){
         float prob_ap[8];
         float mprob[2][8];
         int contx=0;
+        reinicia(cartas_acom, prob_ap,  mprob);
         Inicializar_Baraja(numero,palos);
         Barajear(numero,palos);
         //Estas variables tendran el puntaje de cada jugador
@@ -119,7 +122,6 @@ void Juego(float numero[], char palos[]){
         if(opc==0){
             break;
         }
-        reinicia(cartas_acom, prob_ap,  mprob);
         system("clear");        
     } while (true);    
 }
@@ -139,10 +141,7 @@ void reinicia(float cartas_acom[], float prob_ap[], float mprob[2][8]){
                 mprob[i][j] = 0;
            }          
            
-       }
-        
-        
-        
+       }      
 }
 
 
@@ -286,6 +285,7 @@ void Barajear(float numero[], char palos[]){
 void calcProb(float *suma, float cartas_acom[], int *total_c, float prob_ap[], int *contx, float mprob[2][8]){
     *contx =0;
     float frecuencia =0.0;
+    float suma_prob = 0.0;
     
     //posibles candidatos de la carta X
     cartaX(suma,0.5,contx,prob_ap);
@@ -297,7 +297,7 @@ void calcProb(float *suma, float cartas_acom[], int *total_c, float prob_ap[], i
     cartaX(suma,6.0,contx,prob_ap);
     cartaX(suma,7.0,contx,prob_ap);
     
-    
+    //printf("\nconteo total_c %d", *total_c);
 
     //Se sacamos la frecuencia de las cartas acomuladas y la asignamos en la matriz
     for (int i = 0; i <*contx; i++){
@@ -312,24 +312,38 @@ void calcProb(float *suma, float cartas_acom[], int *total_c, float prob_ap[], i
         frecuencia = 0.0;                     
     }
     //sacando las P(Bi)
-    for (int i = 0; i <7; i++){
+    for (int i = 0; i <8; i++){
        if(mprob[0][i]>0){
            if(i==0){
-            mprob[0][i] = ((12-mprob[0][i])/ *total_c);
+            mprob[0][i] = ((12-mprob[0][i])/ (*total_c + 1.0));
            }
            else{
-            mprob[0][i] = ((4-mprob[0][i])/ *total_c);
+            mprob[0][i] = ((4-mprob[0][i])/ (*total_c + 1.0));
            }
-       }             
+       }
+       else if(mprob[1][i]>0){
+           float figura = 12.0/ (*total_c + 1.0);
+           float otra = 4.0 / (*total_c + 1.0);           
+           if(i==0){
+            mprob[0][i] = figura;
+           }
+           else{
+            mprob[0][i] = otra;
+           }
+           
+       }
+       else{
+           mprob[0][i] = 0;
+       }      
+        suma_prob = suma_prob + mprob [0][i]; //(P(A))            
    }
-   printf("\nTotal de cartas %d\n", *total_c);
-    for (int i = 0; i <2; i++){
-        for (int j = 0; j <8; j++){
-            printf("%f  ", mprob[i][j]);
+   //Aqui ya calculamos bayes
+   for (int i = 0; i < 8; i++)
+   {
+        if(suma_prob!=0){
+            mprob [0][i] = mprob [0][i] / suma_prob;
         }
-        printf("\n");
-                     
-    }
+   }
     
 }
 
@@ -338,12 +352,12 @@ void cartaX(float *suma, float carta, int *contx, float porb_ap[]){
     //Si la suma de los valores de las cartas visibles, mas la posible carta X es menor que 7.5
     // El valor de "Carta", es una candidata a la carta X, entonces la guardamos en el arreglo
    float objetivo = (*suma +carta);
-   printf("\nsuma %f\n", *suma);
     if(objetivo <= 7.5){
         porb_ap[*contx]=carta;
-        printf("\ncarta %f\n", carta);
         *contx += 1;
+         
     }
+   
 
 }
 
@@ -353,7 +367,7 @@ bool Turno_Jugador(float numero[], char palos[],float* puntaje_u, int* recorre, 
     int opcion = 0;
     char paloAux[13];//palos que se le dara al jugador
     float numAux[13];//numero de carta que se le dara al jugador
-    int cantidad =0;//indice que recorre a los arreglos auxiliares  seria nuestra j  
+    int cantidad =0;//indice que recorre a los arreglos auxiliares  
     
     do{
         printf("\t\t\t Ronda numero: %d \n", cantidad+1);
@@ -420,8 +434,10 @@ bool Turno_Maquina(float numero[], char palos[], float *puntaje_m, int *recorre,
          printf("\t\t\t Ronda numero: %d \n", cantidad+1);
         paloAux[cantidad] = palos[*recorre];
         numAux[cantidad] = numero[*recorre];
+        cartas_acom[cantidad] = numero[*recorre];
         *puntaje_m +=numAux[cantidad];
         printf("\t\nLas cartas de la maquina son: \n\n");
+
         for(int i = 0; i < cantidad+1; i++){
             printf("\t%.2f de  ",numAux[i]);
             if(paloAux[i]=='O'){
@@ -438,17 +454,92 @@ bool Turno_Maquina(float numero[], char palos[], float *puntaje_m, int *recorre,
 
             }                    
         }
+        cantidad++;
+        *recorre+=1;
+        *total_c -=1;    
         calcProb(suma, cartas_acom,total_c,prob_ap, contx, mprob);
-        //printf("\nsuma desde turno maquina:  %f   ", *suma);
-        
+        bool valorObjetivo = iaMaquina(cartas_acom,puntaje_m, prob_ap,mprob, total_c);
         if(*puntaje_m>7.5){
             return true;
-        }else if(*puntaje_m>6){
+        }else if(valorObjetivo==true){//si se alcanza un valor objetivo deja de pedir
             return false;
 
         }    
-        cantidad++;
-        *recorre+=1;
+        
     } while (1);    
     
+}
+
+
+
+bool iaMaquina(float cartas_acom[], float *puntaje_m, float prob_ap[], float mprob[2][8], int *total_c){
+    float pg=0.0;
+    float pp=0;
+    float difpuntos[8];
+    // puntaje_m va a se nuestro pg
+    //mprob[0][i] (P(Bi|A)) va a ser nuestro pp
+
+    // Determinamos el valor de pg
+    for (int i = 0; i <8; i++){
+        if(i==0){
+            if(*puntaje_m >= (mprob[1][i] + 0.5)){
+                 pg =  mprob[0][i];
+                 break;
+            }    
+        }
+        else{
+             if(*puntaje_m >= (mprob[1][i] + i)){
+                pg = mprob[0][i];
+                break;
+            }
+        }
+      
+                       
+    }
+    printf("\n\n soy pg: %f\n", pg);
+
+    //Determinamos el valor de pp
+    //Posibibles cartas donde te pasarias del 7.5 si pides una mas
+    for (int i = 0; i < 8; i++)
+    {
+        if(i==0.0){
+            if((*puntaje_m + 0.5)>7.5){
+                difpuntos[i] = (float)i;
+            }
+            else
+            {
+                difpuntos[i] = 0.0;
+            }
+            
+        }
+        else
+        {
+            if((*puntaje_m + (float)i)>7.5){
+                difpuntos[i] = (float)i;
+            }
+            else
+            {
+                difpuntos[i] = 0.0;
+            }   
+        }
+        difpuntos[i] = difpuntos[i] / (*total_c + 1.0);
+        pp = pp + difpuntos[i];
+       // printf("\n soy difpuntos[i]: %f", difpuntos[i]);
+    }
+
+    printf("\nsoy pp %f\n", pp);
+    if(pg>=0.7||pg>=0.01){
+        if(pp>0.5){
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+        
+    }
+    return false;  
+    
+    
+
 }

@@ -1,43 +1,44 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <unistd.h>
-#include <pthread.h>
+#include <string.h>
+void strreverse(char* begin, char* end);
+void itoa_(int value, char *str); 
+int main(){
+    char buf[BUFSIZ];
+    int n = 2000;
+    // sprintf(buf,"%d", n);
+    // puts(buf);
+    itoa_(n,buf);
+    int tamano = strlen( buf);
+    printf("%d",tamano);
+    int entero = (int) buf[0];
+    printf("imprimiendo a entero : %d", entero);
 
-//Prototipos
-void * Saludo(void*);
-
-int num_ale[5];
-
-int main(int argc, char **argv){
-    srand(time(NULL));
-
-    for (int i = 0; i < 5; i++)
-    {
-        num_ale[i] = rand() % 1000000;
-    }
     
-    pthread_t t1,t2,t3,t4,t5;
-
-    pthread_create(&t1, NULL, Saludo, (void*)0);
-    pthread_create(&t2, NULL, Saludo, (void*)1);
-    pthread_create(&t3, NULL, Saludo, (void*)2);
-    pthread_create(&t4, NULL, Saludo, (void*)3);
-    pthread_create(&t5, NULL, Saludo, (void*)4);
-
-    pthread_join(t1,NULL);
-    pthread_join(t2,NULL);
-    pthread_join(t3,NULL);
-    pthread_join(t4,NULL);
-    pthread_join(t5,NULL);
+    return 0;
 }
 
-
-void * Saludo(void *arg){
-    int tid = *((int *)(&arg));
-    int retraso = num_ale[tid];
-    float tiempo_r = (float)num_ale[tid] / 1000000;
-    printf("\tHola soy el hilo con TID = %d\n", tid);
-    usleep(retraso);
-    printf("\t%d: Termino mi ejecucion despues de %1.2f segundos\n", tid,tiempo_r);
-    pthread_exit(NULL);
+void strreverse(char* begin, char* end) 
+{   
+    char aux;   
+    while(end>begin)    
+        aux=*end, *end--=*begin, *begin++=aux;  
 }
+void itoa_(int value, char *str)
+{
+    char* wstr=str; 
+    int sign;   
+    //div_t res;
+    
+    if ((sign=value) < 0) value = -value;
+    
+    do {    
+      *wstr++ = (value%10)+'0'; 
+    }while((value=(value/10)));
+    
+    if(sign<0) *wstr++='-'; 
+    *wstr='\0';
+
+    strreverse(str,wstr-1);
+}
+

@@ -1,3 +1,15 @@
+/***********************************************************************************************************************
+    
+
+                                        UNIVERSIDAD AUTONOMA METROPOLITANA
+                                        NOMBRE: CARRILLO PACHECHO FRANCISCO JAVIER
+                                        MATRICULA: 2143008102
+                                        FECHA DE ENTREGA: 10/06/2019
+
+
+ **********************************************************************************************************************/
+
+
 #include <stdio.h>
 #include <time.h>
 #include <stdlib.h> 

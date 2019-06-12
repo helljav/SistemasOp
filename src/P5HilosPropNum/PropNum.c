@@ -32,7 +32,7 @@ int factorial(int numero);
 int charToInt(char num);
 
 #define N_Maestros 3
-#define N_Esclavos  100 //Modificamos el numero de hilos esclavos
+#define N_Esclavos  10000 //Modificamos el numero de hilos esclavos
 int iteraciones;
 int contPerfectos[N_Esclavos];
 int contFuertes [N_Esclavos];

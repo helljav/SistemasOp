@@ -1,34 +1,69 @@
 package Parte_Final;
 
-import java.awt.BorderLayout;
-import java.awt.EventQueue;
-
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
-import javax.swing.BorderFactory;
-import javax.swing.GroupLayout;
-import javax.swing.GroupLayout.Alignment;
-import javax.swing.JTable;
-import javax.swing.JLabel;
-import javax.swing.UIManager;
 import java.awt.Color;
-import javax.swing.SwingConstants;
+import java.awt.EventQueue;
 import java.awt.Font;
-import javax.swing.border.LineBorder;
-import java.awt.Dimension;
 import java.awt.GridLayout;
-import javax.swing.border.TitledBorder;
-import javax.swing.LayoutStyle.ComponentPlacement;
-import javax.swing.JTextField;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
+import javax.swing.UIManager;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.LineBorder;
 
-public class Round_Robin extends JFrame {
+public class Round_Robin extends JFrame implements ActionListener {
+	
+	/**
+	 * Con esta clase se crearan objetos de tipo proceso en la cola y estos contendran la informacion de la tabla
+	 */
+    class Procesos {
 
+        private int numRafagas;
+        private final Color color;
+        private final int arrivo;
+        private final String name;
+
+        public Procesos(String numRafagas, Color color, String arrivo, String name) {
+            this.numRafagas = Integer.parseInt(numRafagas);
+            this.color = color;
+            this.arrivo = Integer.parseInt(arrivo);
+            this.name = name;
+        }
+
+        public int getnumRafagas() {
+            return numRafagas;
+        }
+
+        public Color getColor() {
+            return color;
+        }
+
+        public int getArrivo() {
+            return arrivo;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setnumRafagas(int numRafagas) {
+            this.numRafagas = numRafagas;
+        }
+    }
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
-	private JPanel panel;
-	private JPanel panel_2;
-	private JPanel panel_1;
+	private JPanel panel, panel_2, panel_1;
 	private JLabel[][] info;
 	private JLabel[][] simulacion;
 	private int n=5;//filas procesos
@@ -40,8 +75,10 @@ public class Round_Robin extends JFrame {
 	private JTextField textRespuesta;
 	private JTextField textField;
 	private JTextField textRafaga;
-	private Font fuente1 = new Font("Consolas", Font.BOLD, 16);
-	private Font fuente2 = new Font("Consolas", Font.BOLD, 12);
+	private JButton btnNuevaSimulacion,btnComenzarSimulacion,btnEstablecerRafaga;
+	private Font fuente1 = new Font("Currier New", Font.BOLD, 16);
+	private Font fuente2 = new Font("Currier New", Font.BOLD, 12);
+	private int tiempo;
 
 	/**
 	 * Launch the application.
@@ -105,14 +142,17 @@ public class Round_Robin extends JFrame {
 				textRafaga.setBounds(176, 305, 76, 32);
 				textRafaga.setColumns(10);
 				
-				JButton btnEstablecerRafaga = new JButton("ESTABLECER TIEMPO");
+				btnEstablecerRafaga = new JButton("ESTABLECER TIEMPO");
 				btnEstablecerRafaga.setBounds(262, 307, 161, 28);
+				btnEstablecerRafaga.addActionListener(this);
 				
-				JButton btnNuevaSimulacion = new JButton("NUEVA SIMULACION");
+				btnNuevaSimulacion = new JButton("NUEVA SIMULACION");
 				btnNuevaSimulacion.setBounds(567, 305, 155, 32);
+				btnNuevaSimulacion.addActionListener(this);
 				
-				JButton btnComenzarSimulacion = new JButton("COMENZAR SIMULACION");
+				btnComenzarSimulacion = new JButton("COMENZAR SIMULACION");
 				btnComenzarSimulacion.setBounds(739, 305, 179, 30);
+				btnComenzarSimulacion.addActionListener(this);
 				
 				JLabel lblEspera = new JLabel("TIEMPO PROMEDIO DE ESPERA");
 				lblEspera.setBounds(13, 3, 280, 35);
@@ -163,25 +203,43 @@ public class Round_Robin extends JFrame {
 				contentPane.add(lblTiempoR);
 				
 				panel_2 = new JPanel();
-				panel_2.setBounds(81, 348, 837, 222);
+				panel_2.setBounds(98, 348, 838, 222);
 				panel_2.setLayout(new GridLayout(8, 40));
 				contentPane.add(panel_2);
 				
 				JLabel lblRafaga = new JLabel("RAFAGA");
 				lblRafaga.setHorizontalAlignment(SwingConstants.CENTER);
 				lblRafaga.setFont(new Font("Consolas", Font.BOLD, 12));
-				lblRafaga.setBounds(25, 354, 63, 23);
+				lblRafaga.setBounds(51, 354, 50, 23);
 				contentPane.add(lblRafaga);
+				
+				JLabel labelArribo = new JLabel("ARRIBO");
+				labelArribo.setHorizontalAlignment(SwingConstants.CENTER);
+				labelArribo.setFont(new Font("Consolas", Font.BOLD, 12));
+				labelArribo.setBounds(48, 379, 50, 23);
+				contentPane.add(labelArribo);
+				
+				JLabel lblPlanificador = new JLabel("PLANIFICADOR");
+				lblPlanificador.setHorizontalAlignment(SwingConstants.CENTER);
+				lblPlanificador.setFont(new Font("Consolas", Font.BOLD, 12));
+				lblPlanificador.setBounds(13, 438, 88, 23);
+				contentPane.add(lblPlanificador);
+				
+				JLabel lblFifo = new JLabel("FIFO");
+				lblFifo.setHorizontalAlignment(SwingConstants.CENTER);
+				lblFifo.setFont(new Font("Consolas", Font.BOLD, 12));
+				lblFifo.setBounds(50, 488, 38, 23);
+				contentPane.add(lblFifo);
 				info = new JLabel[n][m];
 				simulacion = new JLabel[ns][ms];
 				
-				simulacion();//Iniaciando la simulacio
+				iniciaPanel();//Iniaciando el panel 
 
 				
 		
 	}
 	
-	void simulacion() {
+	void iniciaPanel() {
 		
 		//Lennando de los primeros componentes que cuentan con la informacion
 		for (int i = 0; i < 5; i++) {
@@ -222,11 +280,123 @@ public class Round_Robin extends JFrame {
 				simulacion[i][j] = new JLabel("");
 				simulacion[i][j].setBorder(new LineBorder(new Color(0, 0, 0), 1, true));
 				simulacion[i][j].setOpaque(true);
-				//simulacion[i][j].setVisible(false);
+				simulacion[i][j].setBackground(Color.WHITE);
+				simulacion[i][j].setVisible(false);
 				simulacion[i][j].setFont(fuente2);
 				panel_2.add(simulacion[i][j]);				
 			}
 		}
+		llenainfo();
 		
 	}
+	
+	void llenainfo() {
+		int num;
+		for (int i = 0; i < n; i++) {
+			for (int j = 0; j < m; j++) {
+				//valores del random para que genere numeros aleatorios entre 0-10 de arrivo (j==1)
+                if (i == 1) {      
+                    if (j == 1) {
+                        num = (int) (Math.random() * 11);
+                        info[i][j].setText(num + "");
+                    } else if(j==2) {//y entre 1-10 para # de rafagas (j==2)
+                        num = (int) (Math.random() * 10) + 1;
+                        info[i][j].setText(num + "");
+                    }
+                }
+                if (i == 2) {
+                    if (j == 1) {
+                        num = (int) (Math.random() * 11);
+                        info[i][j].setText(num + "");
+                    } else if(j==2){
+                        num = (int) (Math.random() * 10) + 1;
+                        info[i][j].setText(num + "");
+                    }
+                    
+                }
+                if (i == 3) {
+                    if (j == 1) {
+                        num = (int) (Math.random() * 11);
+                        info[i][j].setText(num + "");
+                    } else if(j==2) {
+                        num = (int) (Math.random() * 10) + 1;
+                        info[i][j].setText(num + "");
+                    }
+                    
+
+                }
+                if (i == 4) {
+                    if (j == 1) {
+                        num = (int) (Math.random() * 11);
+                        info[i][j].setText(num + "");
+                    } else if(j==2) {
+                        num = (int) (Math.random() * 10) + 1;
+                        info[i][j].setText(num + "");
+                    }
+                }
+            
+                panel.add(info[i][j]);
+				
+			}
+			
+		}
+	}
+	
+	
+	void nuevaSimulacion() {
+		for (int i = 0; i < ns; i++) {
+			for (int j = 0; j < ms; j++) {
+				simulacion[i][j] = new JLabel("");
+				simulacion[i][j].setBackground(Color.WHITE);
+				simulacion[i][j].setVisible(false);				
+			}
+		}			
+		textRafaga.setText("");
+		textEspera.setText("");
+		textRespuesta.setText("");
+		llenainfo();		
+	}
+	
+	
+	void iniciaSimulacion() {
+		Procesos p1 = new Procesos( info[1][2].getText(),info[1][2].getBackground(),info[1][1].getText(),info[1][0].getText());
+		Procesos p2 = new Procesos( info[2][2].getText(),info[1][2].getBackground(),info[1][1].getText(),info[1][0].getText());
+		Procesos p3 = new Procesos( info[3][2].getText(),info[1][2].getBackground(),info[1][1].getText(),info[1][0].getText());
+		Procesos p4 = new Procesos( info[4][2].getText(),info[1][2].getBackground(),info[1][1].getText(),info[1][0].getText());
+		
+		System.out.println(p1.numRafagas+"\n");
+		System.out.println(p2.numRafagas+"\n");
+		System.out.println(p3.numRafagas+"\n");
+		System.out.println(p4.numRafagas+"\n");
+
+	}
+	
+	
+	
+		
+	
+	/**
+	 * Eventos para los botones
+	 * (Personalidad)
+	 */
+	@Override//captura todas las acciones de los botones y realiza la funcion de cada uno
+		public void actionPerformed(ActionEvent e) {
+			if (e.getSource() == btnNuevaSimulacion ) {
+				nuevaSimulacion();
+			}else if(e.getSource()==btnComenzarSimulacion) {
+				if(textRafaga.getText().isEmpty()) {
+					JOptionPane.showMessageDialog(null, "por favor proporcione un numero");					
+				}
+				else {
+					try {
+						tiempo = Integer.parseInt(textRafaga.getText());
+					}catch(Exception e2) {
+						JOptionPane.showInternalMessageDialog(null, "ingrese un numero valido");
+						
+					}
+				}
+			}
+		}
+		
+	
 }

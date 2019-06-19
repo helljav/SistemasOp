@@ -6,6 +6,7 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.LinkedList;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -79,6 +80,7 @@ public class Round_Robin extends JFrame implements ActionListener {
 	private Font fuente1 = new Font("Currier New", Font.BOLD, 16);
 	private Font fuente2 = new Font("Currier New", Font.BOLD, 12);
 	private int tiempo;
+	private boolean bandera = false;
 
 	/**
 	 * Launch the application.
@@ -346,7 +348,7 @@ public class Round_Robin extends JFrame implements ActionListener {
 	void nuevaSimulacion() {
 		for (int i = 0; i < ns; i++) {
 			for (int j = 0; j < ms; j++) {
-				simulacion[i][j] = new JLabel("");
+				simulacion[i][j].setText("");;
 				simulacion[i][j].setBackground(Color.WHITE);
 				simulacion[i][j].setVisible(false);				
 			}
@@ -354,20 +356,73 @@ public class Round_Robin extends JFrame implements ActionListener {
 		textRafaga.setText("");
 		textEspera.setText("");
 		textRespuesta.setText("");
+		bandera = false;
 		llenainfo();		
 	}
 	
 	
 	void iniciaSimulacion() {
-		Procesos p1 = new Procesos( info[1][2].getText(),info[1][2].getBackground(),info[1][1].getText(),info[1][0].getText());
-		Procesos p2 = new Procesos( info[2][2].getText(),info[1][2].getBackground(),info[1][1].getText(),info[1][0].getText());
-		Procesos p3 = new Procesos( info[3][2].getText(),info[1][2].getBackground(),info[1][1].getText(),info[1][0].getText());
-		Procesos p4 = new Procesos( info[4][2].getText(),info[1][2].getBackground(),info[1][1].getText(),info[1][0].getText());
+		int sumaRafagas;
+		int pedazo =0;
+		Procesos p1 = new Procesos( info[1][2].getText(),info[1][2].getBackground(),info[1][1].getText(),"p1");
+		Procesos p2 = new Procesos( info[2][2].getText(),info[2][2].getBackground(),info[2][1].getText(),"p2");
+		Procesos p3 = new Procesos( info[3][2].getText(),info[3][2].getBackground(),info[3][1].getText(),"p3");
+		Procesos p4 = new Procesos( info[4][2].getText(),info[4][2].getBackground(),info[4][1].getText(),"p4");
 		
-		System.out.println(p1.numRafagas+"\n");
-		System.out.println(p2.numRafagas+"\n");
-		System.out.println(p3.numRafagas+"\n");
-		System.out.println(p4.numRafagas+"\n");
+		LinkedList<Procesos> FIFO = new LinkedList();   //cola de procesos
+		
+		sumaRafagas = p1.getnumRafagas() + p2.getnumRafagas() + p3.getnumRafagas() + p4.getnumRafagas();
+		for (int i = 0; i <ns; i++) {
+			for (int j = 0; j < sumaRafagas; j++) {
+				simulacion[i][j].setVisible(true);
+				
+			}
+			
+		}
+		
+//		Cada iteracion de i en el for es un pedazo de rafaga   
+		for (int i = 0; i < sumaRafagas; i++) {
+			if (pedazo>tiempo) {
+				pedazo =0;
+//				Revisar cola y asignar nuevo proceso a la parte visual
+			}
+			simulacion[0][i].setText(String.valueOf(i+1));//rafagas en el area de simulacion
+			simulacion[0][i].setVisible(true);
+			 if (p1.getArrivo()  == i) {
+				 System.out.println(p1.getArrivo());
+                 FIFO.add(p1);
+                 simulacion[1][i].setText("P1");
+                 simulacion[1][i].setForeground(Color.WHITE);
+                 simulacion[1][i].setBackground(Color.BLACK);
+                 simulacion[1][i].setVisible(true);
+             }
+             if (p2.getArrivo()  == i) {
+                 FIFO.add(p2);
+                 simulacion[1][i].setText("P2");
+                 simulacion[1][i].setForeground(Color.WHITE);
+                 simulacion[1][i].setBackground(Color.BLACK);
+                 simulacion[1][i].setVisible(true);
+             }
+             if (p3.getArrivo() == i) {
+                 FIFO.add(p3);
+                 simulacion[1][i].setText("P3");
+                 simulacion[1][i].setForeground(Color.WHITE);
+                 simulacion[1][i].setBackground(Color.BLACK);
+                 simulacion[1][i].setVisible(true);
+             }
+             if (p4.getArrivo() == i) {
+                 FIFO.add(p4);
+                 simulacion[1][i].setText("P4");
+                 simulacion[1][i].setForeground(Color.WHITE);
+                 simulacion[1][i].setBackground(Color.BLACK);
+                 simulacion[1][i].setVisible(true);
+             }  
+			
+		}
+		
+		
+		
+		
 
 	}
 	
@@ -384,16 +439,29 @@ public class Round_Robin extends JFrame implements ActionListener {
 			if (e.getSource() == btnNuevaSimulacion ) {
 				nuevaSimulacion();
 			}else if(e.getSource()==btnComenzarSimulacion) {
-				if(textRafaga.getText().isEmpty()) {
-					JOptionPane.showMessageDialog(null, "por favor proporcione un numero");					
+				if(bandera ==false) {
+					JOptionPane.showMessageDialog(null, "Establesca una rafaga de tiempo primero");
 				}
 				else {
 					try {
 						tiempo = Integer.parseInt(textRafaga.getText());
+						if(tiempo<1||tiempo>10) {
+							JOptionPane.showMessageDialog(null, "Ingrese un numero del 1 al 10");
+						}
+						else {
+							iniciaSimulacion();
+						}
 					}catch(Exception e2) {
-						JOptionPane.showInternalMessageDialog(null, "ingrese un numero valido");
-						
+						JOptionPane.showMessageDialog(null, "Ingrese un numero valido del 1 al 10");
 					}
+				}
+				
+			}else if(e.getSource()==btnEstablecerRafaga) {
+				if(textRafaga.getText().isEmpty()) {
+					JOptionPane.showMessageDialog(null, "Establezca una rafaga de tiempo primero");					
+				}
+				else {
+					bandera = true;
 				}
 			}
 		}

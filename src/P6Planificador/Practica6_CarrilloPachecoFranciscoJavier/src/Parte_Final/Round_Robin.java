@@ -19,6 +19,8 @@ import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 
+import Parte_Final.Round_Robin.infoProceso;
+
 public class Round_Robin extends JFrame implements ActionListener {
 	
 	/**
@@ -28,13 +30,13 @@ public class Round_Robin extends JFrame implements ActionListener {
 
         private int numRafagas;
         private final Color color;
-        private final int arrivo;
+        private final int arribo;
         private final String name;
 
         public Procesos(String numRafagas, Color color, String arrivo, String name) {
             this.numRafagas = Integer.parseInt(numRafagas);
             this.color = color;
-            this.arrivo = Integer.parseInt(arrivo);
+            this.arribo = Integer.parseInt(arrivo);
             this.name = name;
         }
 
@@ -47,7 +49,7 @@ public class Round_Robin extends JFrame implements ActionListener {
         }
 
         public int getArrivo() {
-            return arrivo;
+            return arribo;
         }
 
         public String getName() {
@@ -371,7 +373,12 @@ public class Round_Robin extends JFrame implements ActionListener {
 		
 		LinkedList<Procesos> FIFO = new LinkedList();   //cola de procesos
 		
+		
+		Procesos pActual = new Procesos("0", Color.WHITE, "0", "PA");
+        Procesos pSalida = new Procesos("0", Color.WHITE, "0", "PA");
+		
 		sumaRafagas = p1.getnumRafagas() + p2.getnumRafagas() + p3.getnumRafagas() + p4.getnumRafagas();
+		//Pinta solo una parte de toda la simulacion
 		for (int i = 0; i <ns; i++) {
 			for (int j = 0; j < sumaRafagas; j++) {
 				simulacion[i][j].setVisible(true);
@@ -382,40 +389,39 @@ public class Round_Robin extends JFrame implements ActionListener {
 		
 //		Cada iteracion de i en el for es un pedazo de rafaga   
 		for (int i = 0; i < sumaRafagas; i++) {
-			if (pedazo>tiempo) {
+			if (pedazo==tiempo) {
+				System.out.println(pedazo+"\n");
 				pedazo =0;
 //				Revisar cola y asignar nuevo proceso a la parte visual
+			
 			}
+			pedazo++;
 			simulacion[0][i].setText(String.valueOf(i+1));//rafagas en el area de simulacion
-			simulacion[0][i].setVisible(true);
+			
+			//Solo pinta el arribo y encola en ese punto 
 			 if (p1.getArrivo()  == i) {
-				 System.out.println(p1.getArrivo());
                  FIFO.add(p1);
                  simulacion[1][i].setText("P1");
                  simulacion[1][i].setForeground(Color.WHITE);
                  simulacion[1][i].setBackground(Color.BLACK);
-                 simulacion[1][i].setVisible(true);
              }
              if (p2.getArrivo()  == i) {
                  FIFO.add(p2);
                  simulacion[1][i].setText("P2");
                  simulacion[1][i].setForeground(Color.WHITE);
                  simulacion[1][i].setBackground(Color.BLACK);
-                 simulacion[1][i].setVisible(true);
              }
              if (p3.getArrivo() == i) {
                  FIFO.add(p3);
                  simulacion[1][i].setText("P3");
                  simulacion[1][i].setForeground(Color.WHITE);
                  simulacion[1][i].setBackground(Color.BLACK);
-                 simulacion[1][i].setVisible(true);
              }
              if (p4.getArrivo() == i) {
                  FIFO.add(p4);
                  simulacion[1][i].setText("P4");
                  simulacion[1][i].setForeground(Color.WHITE);
                  simulacion[1][i].setBackground(Color.BLACK);
-                 simulacion[1][i].setVisible(true);
              }  
 			
 		}

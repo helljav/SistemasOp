@@ -1,3 +1,15 @@
+/***********************************************************************************************************************
+    
+
+                                        UNIVERSIDAD AUTONOMA METROPOLITANA
+                                        NOMBRE: CARRILLO PACHECHO FRANCISCO JAVIER
+                                        MATRICULA: 2143008102
+                                        FECHA DE ENTREGA: 10/06/2019
+
+
+ **********************************************************************************************************************/
+
+
 #include <stdio.h>
 #include <time.h>
 #include <stdlib.h> 
@@ -20,7 +32,7 @@ int factorial(int numero);
 int charToInt(char num);
 
 #define N_Maestros 3
-#define N_Esclavos  100 //Modificamos el numero de hilos esclavos
+#define N_Esclavos  10000 //Modificamos el numero de hilos esclavos
 int iteraciones;
 int contPerfectos[N_Esclavos];
 int contFuertes [N_Esclavos];

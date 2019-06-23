@@ -19,8 +19,6 @@ import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 
-import Parte_Final.Round_Robin.infoProceso;
-
 public class Round_Robin extends JFrame implements ActionListener {
 	
 	/**
@@ -29,9 +27,9 @@ public class Round_Robin extends JFrame implements ActionListener {
     class Procesos {
 
         private int numRafagas;
-        private final Color color;
+        private Color color;
         private final int arribo;
-        private final String name;
+        private  String name;
 
         public Procesos(String numRafagas, Color color, String arrivo, String name) {
             this.numRafagas = Integer.parseInt(numRafagas);
@@ -58,6 +56,12 @@ public class Round_Robin extends JFrame implements ActionListener {
 
         public void setnumRafagas(int numRafagas) {
             this.numRafagas = numRafagas;
+        }
+        public void setName(String Nombre) {
+            this.name = Nombre;
+        }
+        public void setColor(Color color) {
+            this.color = color;
         }
     }
 
@@ -371,16 +375,21 @@ public class Round_Robin extends JFrame implements ActionListener {
 		Procesos p3 = new Procesos( info[3][2].getText(),info[3][2].getBackground(),info[3][1].getText(),"p3");
 		Procesos p4 = new Procesos( info[4][2].getText(),info[4][2].getBackground(),info[4][1].getText(),"p4");
 		
+		int cambioContexto=0;
+		Color colorActual = Color.WHITE, colorAnterior=Color.WHITE;
 		LinkedList<Procesos> FIFO = new LinkedList();   //cola de procesos
+		LinkedList<Procesos> FIFOSalida = new LinkedList();   //cola de procesos cuya rafagas hayan sido terminadas
 		
 		
-		Procesos pActual = new Procesos("0", Color.WHITE, "0", "PA");
-        Procesos pSalida = new Procesos("0", Color.WHITE, "0", "PA");
+		Procesos pActual = new Procesos("-1", Color.WHITE, "-1", "PA");
+        
+        boolean pvalidado = false;
+        int contadorFIFO =4;
 		
 		sumaRafagas = p1.getnumRafagas() + p2.getnumRafagas() + p3.getnumRafagas() + p4.getnumRafagas();
 		//Pinta solo una parte de toda la simulacion
 		for (int i = 0; i <ns; i++) {
-			for (int j = 0; j < sumaRafagas; j++) {
+			for (int j = 0; j < 40; j++) {
 				simulacion[i][j].setVisible(true);
 				
 			}
@@ -388,22 +397,16 @@ public class Round_Robin extends JFrame implements ActionListener {
 		}
 		
 //		Cada iteracion de i en el for es un pedazo de rafaga   
-		for (int i = 0; i < sumaRafagas; i++) {
-			if (pedazo==tiempo) {
-				System.out.println(pedazo+"\n");
-				pedazo =0;
-//				Revisar cola y asignar nuevo proceso a la parte visual
+		for (int i = 0; i < 40; i++) {
 			
-			}
-			pedazo++;
-			simulacion[0][i].setText(String.valueOf(i+1));//rafagas en el area de simulacion
-			
+			simulacion[0][i].setText(String.valueOf(i+1));//rafagas en el area de simulacion			
 			//Solo pinta el arribo y encola en ese punto 
 			 if (p1.getArrivo()  == i) {
                  FIFO.add(p1);
                  simulacion[1][i].setText("P1");
                  simulacion[1][i].setForeground(Color.WHITE);
                  simulacion[1][i].setBackground(Color.BLACK);
+                 //System.out.println("Arribo :"+FIFO.indexOf(p1));
              }
              if (p2.getArrivo()  == i) {
                  FIFO.add(p2);
@@ -422,9 +425,53 @@ public class Round_Robin extends JFrame implements ActionListener {
                  simulacion[1][i].setText("P4");
                  simulacion[1][i].setForeground(Color.WHITE);
                  simulacion[1][i].setBackground(Color.BLACK);
-             }  
+             }
+           if(pedazo==tiempo) {
+        	   pedazo=0;
+        	   if(FIFO.size()>0) {
+        		  if(pvalidado == true) {
+        			  pActual = FIFO.remove();
+        			  FIFO.addLast(pActual);
+        			  pActual = FIFO.removeFirst();
+        			  pvalidado = false;
+        			  colorActual = pActual.getColor();
+        		  }
+        		  else {
+        			  pActual = FIFO.removeFirst();
+        			  colorActual = pActual.getColor();
+        		  }
+        	   }
+           }else if(FIFO.size()>0) {
+        	   pActual = FIFO.removeFirst();
+           }
+           if(pActual.getnumRafagas()>0) {
+        	   simulacion[2][i].setText(pActual.getName());
+        	   simulacion[3][i].setBackground(pActual.getColor());
+	           pActual.setnumRafagas(pActual.getnumRafagas()-1);
+	           colorAnterior = pActual.getColor();
+	           pedazo++;
+           }
+           if(pActual.getnumRafagas()>0) {
+        	   FIFO.addFirst(pActual);
+        	   pvalidado = true;
+           }
+           
+           if(colorActual!=colorAnterior) {
+        	   cambioContexto++;
+           }
+          
+  			
+ 			
+  			for (int j = 0; j < FIFO.size(); j++) {
+  				simulacion[contadorFIFO][i].setText(FIFO.get(j).getName());
+  				contadorFIFO++;
+				
+			}
+  			contadorFIFO =4;
+ 			 
 			
 		}
+		System.out.println(cambioContexto);
 		
 		
 		

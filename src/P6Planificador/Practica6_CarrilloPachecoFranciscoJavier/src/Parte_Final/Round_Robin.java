@@ -375,12 +375,13 @@ public class Round_Robin extends JFrame implements ActionListener {
 		Procesos p3 = new Procesos( info[3][2].getText(),info[3][2].getBackground(),info[3][1].getText(),"p3");
 		Procesos p4 = new Procesos( info[4][2].getText(),info[4][2].getBackground(),info[4][1].getText(),"p4");
 		
+		int cambioContexto=0;
+		Color colorActual = Color.WHITE, colorAnterior=Color.WHITE;
 		LinkedList<Procesos> FIFO = new LinkedList();   //cola de procesos
 		LinkedList<Procesos> FIFOSalida = new LinkedList();   //cola de procesos cuya rafagas hayan sido terminadas
 		
 		
 		Procesos pActual = new Procesos("-1", Color.WHITE, "-1", "PA");
-        Procesos pSalida = new Procesos("-1", Color.WHITE, "-1", "PA");
         
         boolean pvalidado = false;
         int contadorFIFO =4;
@@ -433,9 +434,11 @@ public class Round_Robin extends JFrame implements ActionListener {
         			  FIFO.addLast(pActual);
         			  pActual = FIFO.removeFirst();
         			  pvalidado = false;
+        			  colorActual = pActual.getColor();
         		  }
         		  else {
         			  pActual = FIFO.removeFirst();
+        			  colorActual = pActual.getColor();
         		  }
         	   }
            }else if(FIFO.size()>0) {
@@ -445,6 +448,7 @@ public class Round_Robin extends JFrame implements ActionListener {
         	   simulacion[2][i].setText(pActual.getName());
         	   simulacion[3][i].setBackground(pActual.getColor());
 	           pActual.setnumRafagas(pActual.getnumRafagas()-1);
+	           colorAnterior = pActual.getColor();
 	           pedazo++;
            }
            if(pActual.getnumRafagas()>0) {
@@ -452,11 +456,14 @@ public class Round_Robin extends JFrame implements ActionListener {
         	   pvalidado = true;
            }
            
+           if(colorActual!=colorAnterior) {
+        	   cambioContexto++;
+           }
           
   			
  			
   			for (int j = 0; j < FIFO.size(); j++) {
-  				simulacion[contadorFIFO][i].setText(pActual.getName());
+  				simulacion[contadorFIFO][i].setText(FIFO.get(j).getName());
   				contadorFIFO++;
 				
 			}
@@ -464,6 +471,7 @@ public class Round_Robin extends JFrame implements ActionListener {
  			 
 			
 		}
+		System.out.println(cambioContexto);
 		
 		
 		

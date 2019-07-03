@@ -12,6 +12,10 @@
 //                              DECLACARACION DE PROTOTIPOS
 void presentacion();
 void inicializaDatos();
+void llenaMatriz();
+void LFU_FIFO();
+void imprimeAccesos(int , int *);
+void reiniciaRAM();
 
 
 
@@ -22,11 +26,17 @@ int *acceso;
 int pgRAM;
 int pgAcceso;
 int vrand;
-int semilla;
+int sem;
+time_t semilla;
+
+/******************************************  FIN DE HEADER ****************************************************/
+
+
 
 int main(int argc, char const *argv[]){
     presentacion();
     inicializaDatos();
+    //LFU_FIFO();
 }
 
 void presentacion(){
@@ -55,16 +65,83 @@ void inicializaDatos(){
 	printf("Ingresa el rango del de RAND (limite del numero de etiquetas)\n\n");
 	scanf("%d",&vrand);
 	printf("Ingresa la semilla para iniciar el rand()\n");
-	scanf("%d",&semilla);
+	scanf("%d",&sem);
+    //casteo de la semilla
+    semilla = (time_t)sem;
+    llenaMatriz();   
+    
+}
+
+void llenaMatriz(){
+    //Arreglo que representa las secciones de paginas que seran accesadas
     acceso = (int *)malloc(pgAcceso*sizeof(int));
+
     // el numero 2 es el numero de filas (RAND y llegada o a si )
-    ram =(int**)malloc(2*sizeof(Info*));
+    ram =(int**)malloc(2*sizeof(int*));
     for (int i = 0; i <2; i++)
     {
-        ram[i] = (int*)malloc(pgAcceso*sizeof(int));
+        ram[i] = (int*)malloc(pgRAM*sizeof(int));
+    }
+
+    //Inicializamos la matriz igual a cero
+    for (int i = 0; i <2; i++){
+        printf("\n");
+        for (int j = 0; j <pgRAM; j++)
+        {
+            ram[i][j]=0;
+            //printf("%d ",ram[i][j]);
+        }
+        
+    }
+    // Ponemos la etiquetas de las secciones a accesar de manera aleatoria 
+    srand((unsigned)time(&semilla));
+	for(int i=0;i<pgAcceso;i++){
+		acceso[i]=1+rand()%vrand;
+        //printf("%d ",acceso[i] );
+	}
+}
+
+void FIFO(){
+    int contAccesos = pgAcceso;
+    int *accesos = acceso;
+    reiniciaRAM();
+    system("clear");
+    printf("\t /***************** First In First Out - FIFO*****************/ \n\n");
+    imprimeAccesos(contAccesos, accesos);
+    for (int i = 0; i < pgAcceso; i++){
+        
     }
     
     
+}
+
+void LFU_FIFO(){
+    int contAccesos = pgAcceso;
+    int *accesos = acceso;
+    reiniciaRAM();
+    system("clear");
+    printf("\t /***************** Least Frequently Used - LFU *****************/ \n\n");
+    imprimeAccesos(contAccesos, accesos);
     
+}
+
+void imprimeAccesos(int contador, int *accesos){
+    for (int i = 0; i < contador; i++)
+    {
+        printf(" %d", accesos[i]);
+    }
+}
+
+
+void reiniciaRAM(){
+    for (int i = 0; i <2; i++)
+    {
+        for (int j = 0; j <pgRAM; j++)
+        {
+            ram[i][j] =0;
+        }
+        
+        
+    }
 }
 

@@ -16,6 +16,8 @@ void llenaMatriz();
 void LFU_FIFO();
 void imprimeAccesos(int , int *);
 void reiniciaRAM();
+void imprimeMatrizCompleta();
+void FIFO();
 
 
 
@@ -37,6 +39,7 @@ int main(int argc, char const *argv[]){
     presentacion();
     inicializaDatos();
     //LFU_FIFO();
+    FIFO();
 }
 
 void presentacion(){
@@ -104,13 +107,22 @@ void llenaMatriz(){
 void FIFO(){
     int contAccesos = pgAcceso;
     int *accesos = acceso;
+    int contador=0;
     reiniciaRAM();
     system("clear");
     printf("\t /***************** First In First Out - FIFO*****************/ \n\n");
     imprimeAccesos(contAccesos, accesos);
+    //Se va a recorrer hasta acabar con toda la secuencia
     for (int i = 0; i < pgAcceso; i++){
+        if(contador<pgRAM){
+            ram[1][contador]=i;//etiqueta de secuencia
+            ram[0][contador]=acceso[i];//etiqueta de llegada
+            contador++;
+        }
         
     }
+
+    imprimeMatrizCompleta();
     
     
 }
@@ -122,6 +134,19 @@ void LFU_FIFO(){
     system("clear");
     printf("\t /***************** Least Frequently Used - LFU *****************/ \n\n");
     imprimeAccesos(contAccesos, accesos);
+    
+}
+
+void imprimeMatrizCompleta(){
+    for (int i = 0; i < 2; i++)
+    {
+        printf("\n");
+        for (int j = 0; j < pgRAM; j++)
+        {
+            printf("%d ", ram[i][j]);
+        }
+        
+    }
     
 }
 

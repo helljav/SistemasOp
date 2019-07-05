@@ -18,7 +18,7 @@ void imprimeAccesos(int , int *);
 void reiniciaRAM();
 void imprimeMatrizCompleta();
 void FIFO();
-
+bool buscaSecuencia(int**, int *, int);
 
 
 //                                      VARIABLES GLOBALES
@@ -111,20 +111,35 @@ void FIFO(){
     reiniciaRAM();
     system("clear");
     printf("\t /***************** First In First Out - FIFO*****************/ \n\n");
-    imprimeAccesos(contAccesos, accesos);
     //Se va a recorrer hasta acabar con toda la secuencia
     for (int i = 0; i < pgAcceso; i++){
-        if(contador<pgRAM){
-            ram[1][contador]=i;//etiqueta de secuencia
-            ram[0][contador]=acceso[i];//etiqueta de llegada
+        imprimeAccesos(contAccesos, accesos);
+        if(buscaSecuencia(ram,accesos,i)==false){
+            if(contador<pgRAM){
+            ram[1][contador]=i+1;//etiqueta de llegada
+            ram[0][contador]=acceso[i];//etiqueta de secuencia
             contador++;
+            }
         }
         
+        imprimeMatrizCompleta();  
+        sleep(3);
+        system("clear");
+        
     }
+    
+    
+}
 
-    imprimeMatrizCompleta();
-    
-    
+// Recibe la ram, la secuencia y el indice que indica en que secuencia esta comparando 
+bool buscaSecuencia(int**ram, int *acceso, int indice){
+    for (int i = 0; i < pgRAM; i++)
+    {
+        if(ram[0][i]==acceso[indice]){
+            return true;
+        }
+    }
+    return false;
 }
 
 void LFU_FIFO(){

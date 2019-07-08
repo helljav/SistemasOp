@@ -27,6 +27,7 @@ void LRU();
 
 int **ram;
 int *acceso;
+int *frecuencia;
 int pgRAM;
 int pgAcceso;
 int vrand;
@@ -44,8 +45,8 @@ int indiceSecuencia=0;
 int main(int argc, char const *argv[]){
     presentacion();
     inicializaDatos();
-    FIFO();
-    sleep(3);
+    //FIFO();
+    //sleep(3);
     LRU();
     //LFU_FIFO();
 }
@@ -94,6 +95,7 @@ void inicializaDatos(){
 void llenaMatriz(){
     //Arreglo que representa las secciones de paginas que seran accesadas
     acceso = (int *)malloc(pgAcceso*sizeof(int));
+    frecuencia = (int *)malloc(pgRAM*sizeof(int));
 
     // el numero 2 es el numero de filas (RAND y llegada o a si )
     ram =(int**)malloc(2*sizeof(int*));
@@ -112,11 +114,15 @@ void llenaMatriz(){
         }
 
     }
-    // Ponemos la etiquetas de las secciones a accesar de manera aleatoria
+  // Ponemos la etiquetas de las secciones a accesar de manera aleatoria
     srand((unsigned)time(&semilla));
 	for(int i=0;i<pgAcceso;i++){
 		acceso[i]=1+rand()%vrand;
         //printf("%d ",acceso[i] );
+	}
+// Inicializamos la frecuencia
+  for(int i=0;i<pgRAM;i++){
+		frecuencia[i]=0;
 	}
 }
 
@@ -236,23 +242,64 @@ bool buscaSecuencia(int**ram, int *acceso, int indice){
 }
 
 void LFU_FIFO(){
-    int contAccesos = pgAcceso;
-    int *accesos = acceso;
-    reiniciaRAM();
-    system("clear");
-    printf("\t /***************** Least Frequently Used - LFU *****************/ \n\n");
-    imprimeAccesos(contAccesos, accesos);
+  printf("\n");
+  sleep(5);
+  system("clear");
+  //int contAccesos = pgAcceso;
+  int *accesos = acceso;
+  int contador=0;
+  int contadorLlegada=0;
+  int pgFault=-1;
+  int actualizaciones=0;
+  reiniciaRAM();
+
+  //Se va a recorrer hasta acabar con toda la secuencia de paginas a accesar
+  for (int i = 0; i < pgAcceso+1; i++){
+      system("clear");
+      printf("\n\t /********************* Least Frequently Used - LFU ******************/ \n\n");
+      imprimeAccesos(i, accesos);
+      imprimeMatrizCompleta();
+      printf("\n");
+      if(buscaSecuencia(ram,accesos,i)==false){//Si la pagina en la secuencia no se encuentra en la RAM, entra
+          if(contador<pgRAM){//SI la memoria RAM aun no se encuentra llena
+              ram[1][contador]=contadorLlegada+1;//etiqueta de llegada
+              ram[0][contador]=acceso[i];//etiqueta de secuencia
+              contador++;
+              contadorLlegada++;
+              pgFault++;
+            }
+          else{
+              // Si la pila ya esta llena, tenemos que sacar como FIFO tener que  meter como FIFO
+              int indice = buscaComoFIFO(ram);//se obtiene el indice de donde tenemos que hacer el intercambio
+              ram[1][indice]=contadorLlegada+1;//etiqueta de llegada
+              ram[0][indice]=acceso[i];//etiqueta de secuencia
+              contador++;
+              contadorLlegada++;
+              pgFault++;
+
+          }
+      }
+      else{//Si esa pagina ya se encuentra en la RAM, Solo se actualiza el tiempo de llegada
+        ram[1][indiceSecuencia]=contadorLlegada+1;//etiqueta de llegada
+        contadorLlegada++;
+        actualizaciones++;//Contador para checar cuantas actualizaciones se hicieron
+      }
+      sleep(3);
+  }
+  printf("Numero de Page Fault: %d", pgFault);
+  printf("\nNumero de actualizaciones hechas: %d",actualizaciones );
+
 
 }
 
 void imprimeMatrizCompleta(){
     for (int i = 0; i < 2; i++)
     {
-        printf("\n");
         for (int j = 0; j < pgRAM; j++)
         {
-            printf("[%d]\n", ram[i][j]);
+            printf("[%d]", ram[i][j]);
         }
+        printf("\n");
 
     }
 

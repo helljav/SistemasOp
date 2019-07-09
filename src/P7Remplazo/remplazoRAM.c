@@ -21,6 +21,7 @@ void FIFO();
 bool buscaSecuencia(int**, int *, int);
 int buscaComoFIFO(int **);
 void LRU();
+int buscaFrecuencia(int *frecuencia);
 
 
 //                                      VARIABLES GLOBALES
@@ -47,8 +48,8 @@ int main(int argc, char const *argv[]){
     inicializaDatos();
     //FIFO();
     //sleep(3);
-    LRU();
-    //LFU_FIFO();
+    //LRU();
+    LFU_FIFO();
 }
 
 void presentacion(){
@@ -251,6 +252,8 @@ void LFU_FIFO(){
   int contadorLlegada=0;
   int pgFault=-1;
   int actualizaciones=0;
+  // int contFrecuencia=0;
+  // int indiceFrecuncia=0;
   reiniciaRAM();
 
   //Se va a recorrer hasta acabar con toda la secuencia de paginas a accesar
@@ -264,18 +267,22 @@ void LFU_FIFO(){
           if(contador<pgRAM){//SI la memoria RAM aun no se encuentra llena
               ram[1][contador]=contadorLlegada+1;//etiqueta de llegada
               ram[0][contador]=acceso[i];//etiqueta de secuencia
+              frecuencia[contador]=1;
               contador++;
               contadorLlegada++;
               pgFault++;
             }
           else{
-              // Si la pila ya esta llena, tenemos que sacar como FIFO tener que  meter como FIFO
-              int indice = buscaComoFIFO(ram);//se obtiene el indice de donde tenemos que hacer el intercambio
-              ram[1][indice]=contadorLlegada+1;//etiqueta de llegada
-              ram[0][indice]=acceso[i];//etiqueta de secuencia
-              contador++;
-              contadorLlegada++;
-              pgFault++;
+              // Si la pila ya esta llena, tenemos que sacar con base a la frecuencia y si hay empates base a la llegada(FIFO)
+              int indice = buscaFrecuencia(frecuencia); //buscaComoFIFO(ram);//se obtiene el indice de donde tenemos que hacer el intercambio
+              if(indice>-1){
+                ram[1][indice]=contadorLlegada+1;//etiqueta de llegada
+                ram[0][indice]=acceso[i];//etiqueta de secuencia
+                contador++;
+                contadorLlegada++;
+                pgFault++;
+              }
+
 
           }
       }
@@ -292,15 +299,40 @@ void LFU_FIFO(){
 
 }
 
+//Checa las llegadas de cada secuencia y la que lleva mas tiempo (la llegada mas corta) a esa se le hara el intercambio en FIFO
+int buscaFrecuencia(int *frecuencia){
+    int aux=10000;
+    int indice=-1;
+    int repetidos=0;//checa cuantas paginas con menor frecuencia hay en la RAM para que esas sean postuladas
+    //int aux[pgRAM];
+    for (int i = 0; i < pgRAM; i++){
+        if(frecuencia[i]<aux){//busca la pagina con menor frecuencia para ser cambiada por otra
+            aux=frecuencia[i];
+            indice=i;
+            repetidos =0;//Si encuentra una frecuencia menor se resetea, ya que por el momento es el unico menor
+        }
+        else if(aux==frecuencia[i]){
+          repetidos++;
+        }
+    }
+    if(repetidos>0){
+      indice = -1:
+    }
+    return indice;//Si manda un
+}
+
 void imprimeMatrizCompleta(){
     for (int i = 0; i < 2; i++)
     {
+        printf("\n");
         for (int j = 0; j < pgRAM; j++)
         {
-            printf("[%d]", ram[i][j]);
+            printf("[%d]", ram[i][j]);/*para la párte final, en el porint debe de llevar un \n y solo mostrar las paginas en ram*/
         }
-        printf("\n");
-
+    }
+    printf("\n");
+    for (int i = 0; i < pgRAM; i++) {
+      printf("[%d]",frecuencia[i] );
     }
 
 }

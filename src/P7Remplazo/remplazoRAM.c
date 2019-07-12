@@ -21,7 +21,8 @@ void FIFO();
 bool buscaSecuencia(int**, int *, int);
 int buscaComoFIFO(int **);
 void LRU();
-int buscaFrecuencia(int *frecuencia);
+int buscaFrecuencia(int *);
+int buscaComoFIFOV2(int);
 
 
 //                                      VARIABLES GLOBALES
@@ -46,9 +47,9 @@ int indiceSecuencia=0;
 int main(int argc, char const *argv[]){
     presentacion();
     inicializaDatos();
-    //FIFO();
+    FIFO();
     //sleep(3);
-    //LRU();
+    LRU();
     LFU_FIFO();
 }
 
@@ -116,7 +117,7 @@ void llenaMatriz(){
 
     }
   // Ponemos la etiquetas de las secciones a accesar de manera aleatoria
-    srand((unsigned)time(&semilla));
+  srand((unsigned)time(&semilla));
 	for(int i=0;i<pgAcceso;i++){
 		acceso[i]=1+rand()%vrand;
         //printf("%d ",acceso[i] );
@@ -275,20 +276,18 @@ void LFU_FIFO(){
           else{
               // Si la pila ya esta llena, tenemos que sacar con base a la frecuencia y si hay empates base a la llegada(FIFO)
               int indice = buscaFrecuencia(frecuencia); //buscaComoFIFO(ram);//se obtiene el indice de donde tenemos que hacer el intercambio
-              if(indice>-1){
-                ram[1][indice]=contadorLlegada+1;//etiqueta de llegada
-                ram[0][indice]=acceso[i];//etiqueta de secuencia
-                contador++;
-                contadorLlegada++;
-                pgFault++;
-              }
-
-
-          }
+              ram[1][indice]=contadorLlegada+1;//etiqueta de llegada
+              ram[0][indice]=acceso[i];//etiqueta de secuencia
+              frecuencia[indice] = 1;
+              contador++;
+              contadorLlegada++;
+              pgFault++;
+            }
       }
-      else{//Si esa pagina ya se encuentra en la RAM, Solo se actualiza el tiempo de llegada
-        ram[1][indiceSecuencia]=contadorLlegada+1;//etiqueta de llegada
-        contadorLlegada++;
+      else{//Si esa pagina ya se encuentra en la RAM, Solo se actualiza la frecienca de dicha pagina en cuestion
+        //ram[1][indiceSecuencia]=contadorLlegada+1;//etiqueta de llegada
+        //contadorLlegada++;
+        frecuencia[indiceSecuencia] = frecuencia[indiceSecuencia]+1;
         actualizaciones++;//Contador para checar cuantas actualizaciones se hicieron
       }
       sleep(3);
@@ -299,28 +298,50 @@ void LFU_FIFO(){
 
 }
 
-//Checa las llegadas de cada secuencia y la que lleva mas tiempo (la llegada mas corta) a esa se le hara el intercambio en FIFO
+//Busca la frecuencia minima
 int buscaFrecuencia(int *frecuencia){
     int aux=10000;
     int indice=-1;
-    int repetidos=0;//checa cuantas paginas con menor frecuencia hay en la RAM para que esas sean postuladas
+    int contEmpate=0;//checa cuantas paginas con menor frecuencia hay en la RAM para que esas sean postuladas
     //int aux[pgRAM];
     for (int i = 0; i < pgRAM; i++){
-        if(frecuencia[i]<aux){//busca la pagina con menor frecuencia para ser cambiada por otra
+        if(frecuencia[i]<aux){//busca el valor de la frecuencia minima
             aux=frecuencia[i];
             indice=i;
-            repetidos =0;//Si encuentra una frecuencia menor se resetea, ya que por el momento es el unico menor
-        }
-        else if(aux==frecuencia[i]){
-          repetidos++;
         }
     }
-    if(repetidos>0){
-      indice = -1:
+    //Busca cuantas veces se repite esa frecuencia minima (busca si hay empates)
+    for (int i = 0; i < pgRAM; i++){
+        if(frecuencia[i]==aux){
+            aux=frecuencia[i];
+            contEmpate++;
+        }
     }
-    return indice;//Si manda un
+    //Si hay empates, llamara a buscaComoFIFOV2 para saber que indice de la memoria RAM sera cambiado
+    if(contEmpate>0){
+      //checa cuantas paginas tienen esa frecuencia minima
+      indice = buscaComoFIFOV2(aux);
+    }
+    //Si no hay mepate pues manda el indice del primer for (indice a ser cambiado en RAM)
+    return indice;
 }
 
+int buscaComoFIFOV2(int frecuenciaMinima){
+  int aux= 100000;//variable donde sera almecenado el numero minimo de llegada (el que lleva mas tiempo en la FIFO)
+  int indice = -1;
+
+  for (int i = 0; i < pgRAM; i++) {
+    if(frecuencia[i]==frecuenciaMinima){
+      if(ram[1][i]<aux){
+        aux=ram[1][i];
+        indice = i;
+      }
+
+    }
+  }
+  return indice;
+
+}
 void imprimeMatrizCompleta(){
     for (int i = 0; i < 2; i++)
     {

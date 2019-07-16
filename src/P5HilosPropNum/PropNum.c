@@ -1,5 +1,5 @@
 /***********************************************************************************************************************
-    
+
 
                                         UNIVERSIDAD AUTONOMA METROPOLITANA
                                         NOMBRE: CARRILLO PACHECHO FRANCISCO JAVIER
@@ -12,7 +12,7 @@
 
 #include <stdio.h>
 #include <time.h>
-#include <stdlib.h> 
+#include <stdlib.h>
 #include <stdbool.h>
 #include <pthread.h>
 #include <unistd.h>
@@ -44,16 +44,16 @@ int contPrimos [N_Esclavos];
 int main(int argc, char const *argv[]){
     srand(time(NULL));
     iteraciones = atoi(argv[1]);//Se carga el numero que recibe como parametro desde que se ejecuta
-   
-    //Creacion de hilos maestros 
+
+    //Creacion de hilos maestros
     pthread_t t_maestros[N_Maestros];
     for (long i = 0; i < N_Maestros; i++){
         pthread_create(&t_maestros[i],NULL,t_control_total,(void *)i);
     }
     for (long i = 0; i < N_Maestros; i++){
         pthread_join(t_maestros[i],NULL);
-    }  
-   
+    }
+
 }
 
 
@@ -61,9 +61,8 @@ int main(int argc, char const *argv[]){
 
 void * t_control_total(void *arg){
     // Casteo para obtener el tid del hilo maestro
-    int tid = *((int *)(&arg));
-    
-    
+    int tid = *((int *)(&arg));   
+
     if(tid==0){
             printf("\nHola soy el maestro con el tid: %d\n",tid);
             printf("\nTiD-0: Mitrabajo es buscar numeros perfectos\n");
@@ -77,11 +76,11 @@ void * t_control_total(void *arg){
                 pthread_join(t_esclavos[i],NULL);
             }
             for (long i = 0; i < N_Esclavos; i++){
-                total_perfc += contPerfectos[i];    
+                total_perfc += contPerfectos[i];
             }
         printf("\nNumero perfectos encontrados: %d", total_perfc);
-            
-          
+
+
         }
     if(tid==1){
         printf("\nHola soy el maestro con el tid: %d\n",tid);
@@ -96,7 +95,7 @@ void * t_control_total(void *arg){
                 pthread_join(t_esclavos[i],NULL);
             }
             for (long i = 0; i < N_Esclavos; i++){
-                total_primos += contPrimos[i];    
+                total_primos += contPrimos[i];
             }
         printf("\nNumeros primos encontrados: %d", total_primos);
     }
@@ -113,12 +112,12 @@ void * t_control_total(void *arg){
                 pthread_join(t_esclavos[i],NULL);
             }
             for (long i = 0; i < N_Esclavos; i++){
-                total_fuertes += contFuertes[i];    
+                total_fuertes += contFuertes[i];
             }
         printf("\nNumeros fuertes encontrados: %d", total_fuertes);
     }
-    
-   
+
+
 
     pthread_exit(NULL);
 }
@@ -145,7 +144,7 @@ void * t_perfectos(void *arg){
         }
         inicio++;
     }
-    
+
     pthread_exit(NULL);
 }
 
@@ -158,9 +157,9 @@ void * t_primos(void *arg){
 
     for (int i = inicio; i < final; i++){
        if (esPrimo(i)==true){
-           contPrimos[tid_E] +=1;           
+           contPrimos[tid_E] +=1;
        }
-       
+
     }
     pthread_exit(NULL);
 }
@@ -173,9 +172,9 @@ bool esPrimo(int num){
     for (int i = 2; i <num; i++){
         if (num%i == 0){
             return false;
-        }  
+        }
     }
-    return true;   
+    return true;
 }
 
 
@@ -196,35 +195,35 @@ void * t_fuertes(void *arg){
              contFuertes[tid_E] += 1;
              //printf("\n i: %d comprobar: %d\n",i,comprobar);
          }
-         comprobar =0;         
-    }   
+         comprobar =0;
+    }
     pthread_exit(NULL);
 }
 
 //metodo que me ayuda a enderezar el arreglo de caracteres
-void strreversa(char* inicio, char* final) 
-{   
-    char aux;   
-    while(final>inicio)    
-        aux=*final, *final--=*inicio, *inicio++=aux;  
+void strreversa(char* inicio, char* final)
+{
+    char aux;
+    while(final>inicio)
+        aux=*final, *final--=*inicio, *inicio++=aux;
 }
 
 //funcion que me ayuda a separar los digitos y convertilos a char
 void itoa_(int num, char *str){
-    char* wstr=str; 
-    int signo;   
+    char* wstr=str;
+    int signo;
     //div_t res;
-    
+
     if ((signo=num) < 0) num = -num;
-    
-    do {    
-      *wstr++ = (num%10)+'0'; 
+
+    do {
+      *wstr++ = (num%10)+'0';
     }while((num=(num/10)));
-    
-    if(signo<0) *wstr++='-'; 
+
+    if(signo<0) *wstr++='-';
     *wstr='\0';
 
-    strreversa(str,wstr-1);//<---- Como el resultado me lo da al reves, esta funcion me ayuda a enderezarlo 
+    strreversa(str,wstr-1);//<---- Como el resultado me lo da al reves, esta funcion me ayuda a enderezarlo
 }
 
 //Saca el factorial
@@ -268,6 +267,6 @@ int charToInt(char num){
         return 8;
     }
     return 9;
-    
-    
+
+
 }

@@ -1,5 +1,13 @@
 
+/****************************************************************************************************************************************************
 
+          Autor: CARRILLO PACHECO FRANCISCO JAVIER
+          Materia: Sistemas Operativos
+          Matricula: 2143008102
+          Proyecto final
+          
+
+******************************************************************************************************************************************************/
 //                                              HEADER
 #include <stdio.h>
 #include <time.h>
@@ -36,6 +44,9 @@ int vrand;
 int sem;
 time_t semilla;
 int indiceSecuencia=0;
+int pgFaultFIFO=0;
+int pgFaultLRU=0;
+int pgFaultLFU=0;
 #define PGRAM_MAX 50
 #define PGACCESO_MAX 200
 
@@ -48,9 +59,15 @@ int main(int argc, char const *argv[]){
     presentacion();
     inicializaDatos();
     FIFO();
-    //sleep(3);
     LRU();
     LFU_FIFO();
+    sleep(1);
+    printf("\n");
+    system("clear");
+    printf("\nNumero de Page Faults Generados por FIFO: %d",pgFaultFIFO );
+    printf("\nNumero de Page Faults Generados por LRU:  %d",pgFaultLRU );
+    printf("\nNumero de Page Faults Generados Por LFU: %d",pgFaultLFU );
+
 }
 
 void presentacion(){
@@ -72,21 +89,21 @@ void presentacion(){
 }
 void inicializaDatos(){
     system("clear");
-    printf("Dame el número de páginas en RAM\n\n");      /* CAPTURA DE DATOS INGRESADOS POR EL USUARIO */
+    printf("\n\nDame el número de páginas en RAM: ");      /* CAPTURA DE DATOS INGRESADOS POR EL USUARIO */
 	scanf("%d",&pgRAM);
      if(pgRAM>PGRAM_MAX){
         printf("Son muchas paginas en RAM, se asignara auntomaticamente 50\n");
         pgRAM=PGRAM_MAX;
     }
-	printf("Ingresa el número total de páginas que serán accesadas\n\n");
+	printf("\n\n Ingresa el número total de páginas que serán accesadas: ");
 	scanf("%d",&pgAcceso);
     if(pgAcceso>PGACCESO_MAX){
         printf("Son muchas paginas para ser accesadas, se asignara automaticamnete");
         pgAcceso=PGACCESO_MAX;
     }
-	printf("Ingresa el rango del de RAND (limite del numero de etiquetas)\n\n");
+	printf("\n\nIngresa el rango del de RAND (limite del numero de etiquetas): ");
 	scanf("%d",&vrand);
-	printf("Ingresa la semilla para iniciar el rand()\n");
+	printf("\n\nIngresa la semilla para iniciar el rand:");
 	scanf("%d",&sem);
     //casteo de la semilla
     semilla = (time_t)sem;
@@ -97,6 +114,7 @@ void inicializaDatos(){
 void llenaMatriz(){
     //Arreglo que representa las secciones de paginas que seran accesadas
     acceso = (int *)malloc(pgAcceso*sizeof(int));
+    //Arreglo que representa las frecuencias de cada pagina en RAM
     frecuencia = (int *)malloc(pgRAM*sizeof(int));
 
     // el numero 2 es el numero de filas (RAND y llegada o a si )
@@ -106,7 +124,7 @@ void llenaMatriz(){
         ram[i] = (int*)malloc(pgRAM*sizeof(int));
     }
 
-    //Inicializamos la matriz igual a cero
+    //Inicializamos la matriz con cada elemento en cero
     for (int i = 0; i <2; i++){
         printf("\n");
         for (int j = 0; j <pgRAM; j++)
@@ -116,6 +134,7 @@ void llenaMatriz(){
         }
 
     }
+
   // Ponemos la etiquetas de las secciones a accesar de manera aleatoria
   srand((unsigned)time(&semilla));
 	for(int i=0;i<pgAcceso;i++){
@@ -127,6 +146,7 @@ void llenaMatriz(){
 		frecuencia[i]=0;
 	}
 }
+
 
 void FIFO(){
     //int contAccesos = pgAcceso;
@@ -159,9 +179,12 @@ void FIFO(){
 
             }
         }
+
+        pgFaultFIFO = pgFault;
         sleep(3);
     }
     printf("Numero de Page Fault: %d", pgFault);
+
 
 }
 
@@ -212,6 +235,7 @@ void LRU(){
     }
     printf("Numero de Page Fault: %d", pgFault);
     printf("\nNumero de actualizaciones hechas: %d",actualizaciones );
+    pgFaultLRU = pgFault;
 
 }
 
@@ -294,6 +318,7 @@ void LFU_FIFO(){
   }
   printf("Numero de Page Fault: %d", pgFault);
   printf("\nNumero de actualizaciones hechas: %d",actualizaciones );
+  pgFaultLFU = pgFault;
 
 
 }
@@ -343,19 +368,11 @@ int buscaComoFIFOV2(int frecuenciaMinima){
 
 }
 void imprimeMatrizCompleta(){
-    for (int i = 0; i < 2; i++)
-    {
-        printf("\n");
-        for (int j = 0; j < pgRAM; j++)
-        {
-            printf("[%d]", ram[i][j]);/*para la párte final, en el porint debe de llevar un \n y solo mostrar las paginas en ram*/
-        }
-    }
-    printf("\n");
-    for (int i = 0; i < pgRAM; i++) {
-      printf("[%d]",frecuencia[i] );
-    }
-
+  printf("\nEstado de paginacion en RAM: \n" );
+  for (int j = 0; j < pgRAM; j++)
+  {
+      printf("[%d]\n", ram[0][j]);/*para la párte final, en el porint debe de llevar un \n y solo mostrar las paginas en ram*/
+  }
 }
 
 void imprimeAccesos(int indice, int *accesos){
